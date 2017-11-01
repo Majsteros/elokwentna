@@ -1,12 +1,13 @@
 package arkadiuszpalka.elokwentna;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.AttributeSet;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -19,8 +20,9 @@ import java.util.Map;
 
 import arkadiuszpalka.elokwentna.handler.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     Context context;
+    private BottomNavigationView bottomNavigationView;
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
     private static final String TAG = MainActivity.class.getName();
 
@@ -29,10 +31,23 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
-        new DownloadWordsTask(this.context).execute();
-        TextView tableTest = (TextView) findViewById(R.id.tableTest);
-        DatabaseHandler db = new DatabaseHandler(context);
-        tableTest.setText(db.getTableAsString(DatabaseHandler.TABLE_WORDS));
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
+        bottomNavigationView.setOnNavigationItemSelectedListener(
+                new BottomNavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.bottombaritem_words:
+                                        return true;
+                                    case R.id.bottombaritem_favorite:
+                                        return true;
+                                    case R.id.bottombaritem_settings:
+                                        return true;
+                                }
+                                return false;
+                    }
+    });
+        //new DownloadWordsTask(this.context).execute();
     }
 
     private static class DownloadWordsTask extends AsyncTask<Void, Void, String> {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+    android:id="@+id/bottombaritem_words"
+    android:icon="@drawable/ic_view_headline_black_24dp"
+    android:title="Słówka"
+    app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/bottombaritem_favorite"
+        android:icon="@drawable/ic_favorite_black_24dp"
+        android:title="Ulubione"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/bottombaritem_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="Ustawienia"
+        app:showAsAction="ifRoom"/>
+</menu>
