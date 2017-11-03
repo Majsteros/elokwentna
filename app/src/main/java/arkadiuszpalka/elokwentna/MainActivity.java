@@ -1,10 +1,15 @@
 package arkadiuszpalka.elokwentna;
 
+import android.app.Fragment;
 import android.content.Context;
+import android.content.ContextWrapper;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import arkadiuszpalka.elokwentna.fragment.FavoriteFragment;
+import arkadiuszpalka.elokwentna.fragment.SettingsFragment;
+import arkadiuszpalka.elokwentna.fragment.WordsFragment;
 import arkadiuszpalka.elokwentna.handler.*;
 
 /**
@@ -29,15 +37,7 @@ import arkadiuszpalka.elokwentna.handler.*;
 
 public class MainActivity extends AppCompatActivity {
     Context context;
-    /**
-     * Contains a list of fragments for {@link BottomNavigationView}
-     */
-    private List<BottomBarFragment> fragments = new ArrayList<>(3);
-
-    private static final String TAG_FRAGMENT_WORDS = "arg_frag_words";
-    private static final String TAG_FRAGMENT_FAV = "arg_frag_fav";
-    private static final String TAG_FRAGMENT_DESC = "arg_frag_desc";
-
+    private int[] bottomBarColors;
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
     private static final String TAG = MainActivity.class.getName();
 
@@ -53,52 +53,44 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.bottombaritem_words:
-                            switchFragment(0, TAG_FRAGMENT_WORDS);
+                            changeFragment(0);
                             return true;
                         case R.id.bottombaritem_favorite:
-                            switchFragment(1, TAG_FRAGMENT_FAV);
+                            changeFragment(1);
                             return true;
                         case R.id.bottombaritem_settings:
-                            switchFragment(2, TAG_FRAGMENT_DESC);
+                            changeFragment(2);
                             return true;
                     }
                     return false;
                 }
             });
-        buildFragmentList();
-        switchFragment(0, TAG_FRAGMENT_WORDS);
+        bottomBarColors = new int[]{
+                R.color.colorOne,
+                R.color.colorTwo,
+                R.color.colorThree
+        };
+
+        changeFragment(0); //First setup
     }
 
-    private void switchFragment(int pos, String tag) {
-        getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frame_fragmentholder, fragments.get(pos), tag)
+    private void changeFragment(int position) {
+        Fragment fragment = null;
+        switch (position) {
+            case 0:
+                fragment = new WordsFragment();
+                break;
+            case 1:
+                fragment = new FavoriteFragment();
+                break;
+            case 2:
+                fragment = new SettingsFragment();
+                break;
+        }
+        getFragmentManager().beginTransaction()
+                .replace(R.id.frame_fragmentholder, fragment)
                 .commit();
     }
-
-    private void buildFragmentList() {
-        BottomBarFragment wordsFragment = buildFragment("Words");
-        BottomBarFragment favoritesFragment = buildFragment("Favorites");
-        BottomBarFragment settingsFragment = buildFragment("Settings");
-        fragments.add(wordsFragment);
-        fragments.add(favoritesFragment);
-        fragments.add(settingsFragment);
-    }
-
-    /**
-     * Creates a {@link BottomBarFragment} with corresponding Item title.
-     * @param title Title of fragment
-     * @return Fragment
-     */
-    private BottomBarFragment buildFragment(String title) {
-        BottomBarFragment fragment = new BottomBarFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(BottomBarFragment.ARG_TITLE, title);
-        fragment.setArguments(bundle);
-        return fragment;
-    }
-
-
 
     /**
      * Downloads in new thread words then inserts them to database.

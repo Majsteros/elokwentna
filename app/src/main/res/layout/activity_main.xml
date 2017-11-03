@@ -17,12 +17,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:itemBackground="@color/colorPrimary"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
-        app:menu="@menu/bottombar_menu"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp">
+        app:itemBackground="@color/colorAccent"
+        app:itemIconTint="@drawable/selector_bottombar_state"
+        app:itemTextColor="@drawable/selector_bottombar_state"
+        app:layout_scrollFlags="scroll|enterAlways|snap"
+        app:menu="@menu/bottombar">
     </android.support.design.widget.BottomNavigationView>
 
 </FrameLayout>

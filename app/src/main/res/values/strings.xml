@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Elokwentna</string>
+    <string name="title_activity_test">test</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_default">Default Title</string>
+    <string name="example_default">Lorem ipsum dolor sit amet tempor varius, nisl ac mauris tincidunt eget, ultricies porta. Aenean posuere risus. Etiam vestibulum vel, urna. Aliquam interdum ipsum vitae fringilla mollis. Proin imperdiet faucibus.</string>
 </resources>
