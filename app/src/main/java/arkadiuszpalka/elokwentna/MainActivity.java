@@ -2,14 +2,10 @@ package arkadiuszpalka.elokwentna;
 
 import android.app.Fragment;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,15 +15,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
 import arkadiuszpalka.elokwentna.fragment.FavoriteFragment;
 import arkadiuszpalka.elokwentna.fragment.SettingsFragment;
 import arkadiuszpalka.elokwentna.fragment.WordsFragment;
-import arkadiuszpalka.elokwentna.handler.*;
+import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
+import arkadiuszpalka.elokwentna.handler.HttpHandler;
 
 /**
  * TODO Zrobić SwipeView
@@ -37,7 +33,6 @@ import arkadiuszpalka.elokwentna.handler.*;
 
 public class MainActivity extends AppCompatActivity {
     Context context;
-    private int[] bottomBarColors;
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
     private static final String TAG = MainActivity.class.getName();
 
@@ -46,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
+        new DownloadWordsTask(context).execute(); //debug
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -65,11 +61,6 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             });
-        bottomBarColors = new int[]{
-                R.color.colorOne,
-                R.color.colorTwo,
-                R.color.colorThree
-        };
 
         changeFragment(0); //First setup
     }

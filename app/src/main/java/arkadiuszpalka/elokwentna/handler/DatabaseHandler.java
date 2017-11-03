@@ -10,6 +10,8 @@ import android.util.Log;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +24,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     //Number of millis to next words update
-    private static final int NUM_OF_MILLIS = 8640000; //8640000
+    public static final int NUM_OF_MILLIS = 8640000; //8640000
     private static final String STR_SEPARATOR = ",";
-    private static final int NUM_OF_WORDS = 3;
+    public static final int NUM_OF_WORDS = 3;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     //Tables names
     public static final String TABLE_WORDS = "words";
@@ -40,7 +43,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //Config table columns names
     private static final String KEY_CONFIG_ID = "id_config";
     public static final String KEY_CONFIG_LAST_UPDATED = "last_updated"; //variable for database
-    private static final String KEY_CONFIG_NEXT_WORD_UPDATE = "next_word_update";
+    public static final String KEY_CONFIG_NEXT_WORD_UPDATE = "next_word_update";
     private static final String KEY_CONFIG_SAVED_IDS = "saved_ids";
     private static final String TAG = DatabaseHandler.class.getName();
 
@@ -80,6 +83,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public boolean checkNextWordUpdate() {
+        Log.d(TAG, "Docelowy = " + Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE)));
+        Log.d(TAG, "Obecny = " + new DateTime(DateTimeZone.UTC).getMillis());
+        return Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE)) < new DateTime(DateTimeZone.UTC).getMillis();
+    }
+
     public void addWord(String word, String desc) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
@@ -90,7 +99,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried add words"); //TODO make toasts!
+            Log.d(TAG, "Error when tried add words");
         } finally {
             db.endTransaction();
             db.close();
@@ -117,20 +126,45 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      * Returns random words where value was_displayed is set to 0
      * then changes was_displayed variable to 1
      * and updates saved_id in table Config
-     * @return ids IDs of words
      */
-    public int[] randomWords() {
+    public void randomWords() {
         SQLiteDatabase db = this.getWritableDatabase();
         int[] ids = new int[NUM_OF_WORDS];
-        Cursor cursor = db.rawQuery("SELECT"+ KEY_WORDS_ID +"FROM "+ TABLE_WORDS +" WHERE "+ KEY_WORDS_DISPLAYED +" = 0 ORDER BY RANDOM() LIMIT "+ NUM_OF_WORDS, null);
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_ID +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_DISPLAYED +"` = 0 ORDER BY RANDOM() LIMIT "+ NUM_OF_WORDS, null);
         if (cursor.moveToNext()) {
             for (int i = 0; i < ids.length; i++) {
                 ids[i] = cursor.getInt(0);
             }
+            db.beginTransaction();
+            try {
+                ContentValues values = new ContentValues();
+                values.put(KEY_CONFIG_SAVED_IDS, convertArrayToString(ids));
+                db.setTransactionSuccessful();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d(TAG, "Error when tried update config");
+            } finally {
+                db.endTransaction();
+            }
         }
         cursor.close();
         db.close();
-        return ids;
+    }
+
+    public void setConfig(String key, String value) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(key, value);
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "Error when tried update config");
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
     }
 
     public void setConfigSavedIds(int[] ids) {
@@ -142,7 +176,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried update config: saved ids"); //TODO make toasts!
+            Log.d(TAG, "Error when tried update config: saved ids");
         } finally {
             db.endTransaction();
             db.close();
@@ -159,12 +193,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return value;
     }
 
+    public int[] getConfigSavedIds() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int[] ids = new int[NUM_OF_WORDS];
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_CONFIG_SAVED_IDS +"` FROM `"+ TABLE_CONFIG +"`", null);
+        if (cursor.moveToNext()) {
+            for (int i = 0; i < ids.length; i++) {
+                ids[i] = cursor.getInt(0);
+            }
+        }
+        cursor.close();
+        db.close();
+        return ids;
+    }
+
     /**
      * Returns words where IDs as array is set in Config table
      * @param ids array of IDs separated by comma
      * @return map {@link Map} where key is word, value is description
      */
-    private Map<String, String> getWords(int[] ids) {
+    public Map<String, String> getWords(int[] ids) {
         SQLiteDatabase db = this.getReadableDatabase();
         Map<String, String> map = new HashMap<>();
         Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DISPLAYED +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_ID +"` = '"+ convertArrayToString(ids) +"';", null);

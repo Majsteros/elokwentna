@@ -15,12 +15,12 @@ import arkadiuszpalka.elokwentna.fragment.WordsFragment;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WordViewHolder> {
     private List<WordsFragment.Word> wordsList;
 
-    public static class WordViewHolder extends RecyclerView.ViewHolder {
+    static class WordViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
         TextView wordWord;
         TextView wordDescription;
 
-        public WordViewHolder(View itemView) {
+        WordViewHolder(View itemView) {
             super(itemView);
             cardView = (CardView)itemView.findViewById(R.id.word_card_view);
             wordWord = (TextView)itemView.findViewById(R.id.word_title);
@@ -35,8 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public WordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.words_item, parent, false);
-        WordViewHolder wordViewHolder = new WordViewHolder(view);
-        return wordViewHolder;
+        return new WordViewHolder(view);
     }
 
     @Override
