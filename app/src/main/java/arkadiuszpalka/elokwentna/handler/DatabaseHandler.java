@@ -11,6 +11,7 @@ import android.util.Log;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -22,6 +23,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //Number of millis to next words update
     private static final int NUM_OF_MILLIS = 8640000; //8640000
+    private static final String STR_SEPARATOR = ",";
+    private static final int NUM_OF_WORDS = 3;
 
     //Tables names
     public static final String TABLE_WORDS = "words";
@@ -110,13 +113,66 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Returns random words where value was_displayed is set to 0
+     * then changes was_displayed variable to 1
+     * and updates saved_id in table Config
+     * @return ids IDs of words
+     */
+    public int[] randomWords() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int[] ids = new int[NUM_OF_WORDS];
+        Cursor cursor = db.rawQuery("SELECT"+ KEY_WORDS_ID +"FROM "+ TABLE_WORDS +" WHERE "+ KEY_WORDS_DISPLAYED +" = 0 ORDER BY RANDOM() LIMIT "+ NUM_OF_WORDS, null);
+        if (cursor.moveToNext()) {
+            for (int i = 0; i < ids.length; i++) {
+                ids[i] = cursor.getInt(0);
+            }
+        }
+        cursor.close();
+        db.close();
+        return ids;
+    }
+
+    public void setConfigSavedIds(int[] ids) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_CONFIG_SAVED_IDS, convertArrayToString(ids));
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "Error when tried update config: saved ids"); //TODO make toasts!
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
     public String getConfig(String key) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT `"+ key +"` FROM `"+ TABLE_CONFIG +"`", null);
         cursor.moveToNext();
         String value = cursor.getString(0);
         cursor.close();
+        db.close();
         return value;
+    }
+
+    /**
+     * Returns words where IDs as array is set in Config table
+     * @param ids array of IDs separated by comma
+     * @return map {@link Map} where key is word, value is description
+     */
+    private Map<String, String> getWords(int[] ids) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Map<String, String> map = new HashMap<>();
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DISPLAYED +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_ID +"` = '"+ convertArrayToString(ids) +"';", null);
+        while (cursor.moveToNext())
+            map.put(cursor.getString(0), cursor.getString(1));
+        cursor.close();
+        db.close();
+        return map;
     }
 
     //For debug only
@@ -137,5 +193,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         allRows.close();
         return tableString;
+    }
+
+    public String convertArrayToString(int[] array) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < array.length; i ++) {
+            sb.append(array[i]);
+            if(i < array.length-1)
+                sb.append(STR_SEPARATOR);
+        }
+        return sb.toString();
     }
 }
