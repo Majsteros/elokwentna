@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -159,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
                         map.put(jsonObj.getString("word"), jsonObj.getString("description"));
                     }
                     db.addWords(map);
+                    db.setConfig(DatabaseHandler.KEY_CONFIG_LAST_UPDATED,
+                            DatabaseHandler.DATE_TIME_FORMATTER
+                                    .print(new DateTime(DateTimeZone.UTC)));
                 } catch (JSONException e) {
                     e.printStackTrace();
                     Log.d(TAG, "Error when tried encode JSON object");
