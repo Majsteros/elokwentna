@@ -23,7 +23,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     Context context;
 
     private static final String DATABASE_NAME = "elokwentna";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 1;
 
     //Number of millis to next words update
     public static final int NUM_OF_MILLIS = 3600000; //8640000
@@ -58,7 +58,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         long defaultTime = new DateTime(DateTimeZone.UTC).getMillis();
-        Log.d(TAG, ">>> Pierwszy czas = " + DTF_DEBUG.print(defaultTime));
+        Log.d(TAG, ">>> onCreate DB defaultTime = " + DTF_DEBUG.print(defaultTime));
         String CREATE_WORDS_TABLE = "CREATE TABLE IF NOT EXISTS "+ TABLE_WORDS +" ("
                 + KEY_WORDS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_WORDS_WORD + " varchar(65) NOT NULL,"
@@ -90,8 +90,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean checkNextWordUpdate() {
         Log.d(TAG, "Obecny czas = " + DTF_DEBUG.print(new DateTime(DateTimeZone.UTC).getMillis()));
-        Log.d(TAG, "Czas z bazy = " + DTF_DEBUG.print(Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE))));
+        Log.d(TAG, "Docelowy czas = " + DTF_DEBUG.print(Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE))));
+        Log.d(TAG, ">>> checkNextWordUpdate() returns = " + ((new DateTime(DateTimeZone.UTC).getMillis()) > Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE))));
         return new DateTime(DateTimeZone.UTC).getMillis() > Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE));
+    }
+
+    public int countWords() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM `"+ TABLE_WORDS +"`", null);
+        cursor.moveToNext();
+        int count = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return count;
     }
 
     public void addWord(String word, String desc) {
@@ -199,7 +210,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Map<String, String> getWords(String ids) {
         SQLiteDatabase db = this.getReadableDatabase();
         Map<String, String> map = new HashMap<>();
-        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DISPLAYED +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_ID +"` = '"+ ids +"';", null);
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_ID +"` IN ("+ ids +")", null);
+        if (cursor.getCount() == 0)
+            Log.d(TAG, "getWords zwrócił zero wyników!");
         while (cursor.moveToNext())
             map.put(cursor.getString(0), cursor.getString(1));
         cursor.close();

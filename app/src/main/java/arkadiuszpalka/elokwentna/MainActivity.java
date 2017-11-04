@@ -17,7 +17,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import arkadiuszpalka.elokwentna.fragment.FavoriteFragment;
@@ -63,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
             });
 
         changeFragment(0); //First setup
+
+        List<WordsFragment.Word> wordList = new ArrayList<>();
+
     }
 
     private void changeFragment(int position) {

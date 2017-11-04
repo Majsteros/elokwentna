@@ -11,11 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import arkadiuszpalka.elokwentna.MainActivity;
 import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.adapter.RecyclerViewAdapter;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
@@ -33,50 +35,39 @@ public class WordsFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
-        myInflatedView = inflater.inflate(R.layout.fragment_words, container, false);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         this.context = getActivity();
         db = new DatabaseHandler(context);
 
-        long startActivity = System.nanoTime(); //debug
-
-        boolean isConfigSavedIdsIsZero = db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS).equals("0");
-
-        if (isConfigSavedIdsIsZero) {
-            Log.d(TAG, "Ids są równe 0, więc pobieram dane");
-            new MainActivity.DownloadWordsTask(context).execute(); //TODO make toasts!
-        }
-
-        Log.d(TAG, ">>> Czy mam zaktualizować słowa? = " + db.checkNextWordUpdate());
-
-        if (db.checkNextWordUpdate() || isConfigSavedIdsIsZero) {
-            List<Integer> ids = db.randomWords();
-            db.setWordsDisplayed(ids);
-            db.setConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS, db.convertArrayToString(ids));
-            db.setConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE,
-                    db.getConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE)
-                            + DatabaseHandler.NUM_OF_MILLIS);
-        }
-
-        Map<String, String> map = db.getWords(
-                db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS));
-
         wordList = new ArrayList<>();
 
-        if (map.size() != 0) {
+        if (db.countWords() > 0) {
+            if (db.checkNextWordUpdate()) {
+                List<Integer> ids = db.randomWords();
+                db.setConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS,
+                        db.convertArrayToString(ids));
+                db.setWordsDisplayed(ids);
+                db.setConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE, Long.toString(
+                        new DateTime(DateTimeZone.UTC)
+                                .getMillis() + DatabaseHandler.NUM_OF_MILLIS));
+            }
+            Map<String, String> map = db.getWords(
+                    db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS));
             for (String key : map.keySet()) {
                 Log.d(TAG, ">>> Map: key = " + key + " value = " + map.get(key)); //debug
                 wordList.add(new Word(key, map.get(key)));
             }
         } else {
+            Log.d(TAG, "Zaktualizuj bazę!"); //TODO make toast!
             for (int i = 1; i <= DatabaseHandler.NUM_OF_WORDS; i++)
                 wordList.add(new Word());
         }
+    }
 
-
-
-        long endActivity = System.nanoTime(); //debug
-        Log.d(TAG, ">>> CZAS GLOWNEJ OPERACJI = " + String.valueOf((endActivity - startActivity) / 1000000000.0)); //debug
+    @Override
+    public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
+        myInflatedView = inflater.inflate(R.layout.fragment_words, container, false);
         recyclerView = (RecyclerView)myInflatedView.findViewById(R.id.words_recyler_view);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(context);
