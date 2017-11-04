@@ -17,8 +17,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     static class WordViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
-        TextView wordWord;
-        TextView wordDescription;
+        TextView wordDescription, wordWord;
 
         WordViewHolder(View itemView) {
             super(itemView);
@@ -30,6 +29,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public RecyclerViewAdapter(List<WordsFragment.Word> wordsList) {
         this.wordsList = wordsList;
+    }
+
+    public void swap(List<WordsFragment.Word> newWordsList) {
+        if (wordsList == null || wordsList.size() == 0)
+            return;
+        if (newWordsList != null && newWordsList.size() > 0) {
+            wordsList.clear();
+            wordsList.addAll(newWordsList);
+            notifyDataSetChanged();
+        }
     }
 
     @Override
