@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import org.json.JSONArray;
@@ -16,7 +18,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import arkadiuszpalka.elokwentna.fragment.FavoriteFragment;
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
-        new DownloadWordsTask(context).execute(); //debug
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -83,10 +83,34 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu (Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.option_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sync:
+                new DownloadWordsTask(context).execute();
+                return true;
+            case R.id.getRandom:
+                return true;
+            case R.id.about:
+                return true;
+            case R.id.help:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     /**
      * Downloads in new thread words then inserts them to database.
      */
-    private static class DownloadWordsTask extends AsyncTask<Void, Void, String> {
+    public static class DownloadWordsTask extends AsyncTask<Void, Void, String> {
         String request;
         DatabaseHandler db;
         JSONObject jsonObj;
@@ -95,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         /** Prepares request to database.
          * @param context Application context
          */
-        private DownloadWordsTask(Context context) {
+        public DownloadWordsTask(Context context) {
             db = new DatabaseHandler(context);
             jsonObj = new JSONObject();
             try {

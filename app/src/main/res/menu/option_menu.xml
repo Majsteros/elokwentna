@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/sync"
+        android:title="@string/button_sync" />
+
+    <item android:id="@+id/getRandom"
+        android:title="Losuj" />
+
+    <item android:id="@+id/about"
+        android:title="@string/button_about" />
+
+    <item android:id="@+id/help"
+        android:title="@string/button_help" />
+</menu>

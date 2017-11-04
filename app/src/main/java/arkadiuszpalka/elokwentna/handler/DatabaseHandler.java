@@ -13,7 +13,9 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
@@ -21,17 +23,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     Context context;
 
     private static final String DATABASE_NAME = "elokwentna";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     //Number of millis to next words update
-    public static final int NUM_OF_MILLIS = 8640000; //8640000
+    public static final int NUM_OF_MILLIS = 3600000; //8640000
     private static final String STR_SEPARATOR = ",";
     public static final int NUM_OF_WORDS = 3;
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter DTF_DEBUG = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
     //Tables names
     public static final String TABLE_WORDS = "words";
-    private static final String TABLE_CONFIG  = "config";
+    public static final String TABLE_CONFIG  = "config";
     private static final String[] ALL_TABLES = {TABLE_CONFIG, TABLE_WORDS};
 
     //Words table columns names
@@ -44,7 +47,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_CONFIG_ID = "id_config";
     public static final String KEY_CONFIG_LAST_UPDATED = "last_updated"; //variable for database
     public static final String KEY_CONFIG_NEXT_WORD_UPDATE = "next_word_update";
-    private static final String KEY_CONFIG_SAVED_IDS = "saved_ids";
+    public static final String KEY_CONFIG_SAVED_IDS = "saved_ids";
     private static final String TAG = DatabaseHandler.class.getName();
 
     public DatabaseHandler(Context context) {
@@ -54,6 +57,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        long defaultTime = new DateTime(DateTimeZone.UTC).getMillis();
+        Log.d(TAG, ">>> Pierwszy czas = " + DTF_DEBUG.print(defaultTime));
         String CREATE_WORDS_TABLE = "CREATE TABLE IF NOT EXISTS "+ TABLE_WORDS +" ("
                 + KEY_WORDS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_WORDS_WORD + " varchar(65) NOT NULL,"
@@ -65,7 +70,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_CONFIG_NEXT_WORD_UPDATE + " DATETIME,"
                 + KEY_CONFIG_SAVED_IDS + " varchar(10));";
         String INSERT_DEFAULT_CONFIG_DATA = "INSERT INTO "+ TABLE_CONFIG +" ("+ KEY_CONFIG_LAST_UPDATED +", "+ KEY_CONFIG_NEXT_WORD_UPDATE +", "+ KEY_CONFIG_SAVED_IDS +") "
-                + "SELECT '1970-01-01 00:00:01', '"+ new DateTime(DateTimeZone.UTC).getMillis() + NUM_OF_MILLIS +"', '0' "
+                + "SELECT '1970-01-01 00:00:01', '"+ defaultTime +"', '0' "
                 + "WHERE NOT EXISTS ("
                 + "SELECT "+ KEY_CONFIG_LAST_UPDATED +","+ KEY_CONFIG_NEXT_WORD_UPDATE +","+ KEY_CONFIG_SAVED_IDS
                 + " FROM "+ TABLE_CONFIG
@@ -84,9 +89,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public boolean checkNextWordUpdate() {
-        Log.d(TAG, "Docelowy = " + Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE)));
-        Log.d(TAG, "Obecny = " + new DateTime(DateTimeZone.UTC).getMillis());
-        return Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE)) < new DateTime(DateTimeZone.UTC).getMillis();
+        Log.d(TAG, "Obecny czas = " + DTF_DEBUG.print(new DateTime(DateTimeZone.UTC).getMillis()));
+        Log.d(TAG, "Czas z bazy = " + DTF_DEBUG.print(Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE))));
+        return new DateTime(DateTimeZone.UTC).getMillis() > Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE));
     }
 
     public void addWord(String word, String desc) {
@@ -122,41 +127,33 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    /**
+    /**TODO doc
      * Returns random words where value was_displayed is set to 0
-     * then changes was_displayed variable to 1
-     * and updates saved_id in table Config
      */
-    public void randomWords() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        int[] ids = new int[NUM_OF_WORDS];
-        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_ID +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_DISPLAYED +"` = 0 ORDER BY RANDOM() LIMIT "+ NUM_OF_WORDS, null);
-        if (cursor.moveToNext()) {
-            for (int i = 0; i < ids.length; i++) {
-                ids[i] = cursor.getInt(0);
-            }
-            db.beginTransaction();
-            try {
-                ContentValues values = new ContentValues();
-                values.put(KEY_CONFIG_SAVED_IDS, convertArrayToString(ids));
-                db.setTransactionSuccessful();
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.d(TAG, "Error when tried update config");
-            } finally {
-                db.endTransaction();
-            }
+    public List<Integer> randomWords() {
+        Log.d(TAG, "randomWords()");
+        SQLiteDatabase db = this.getReadableDatabase();
+        List<Integer> ids = new ArrayList<>(NUM_OF_WORDS);
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_ID +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_DISPLAYED +"`=0 ORDER BY RANDOM() LIMIT "+ NUM_OF_WORDS, null);
+        while (cursor.moveToNext()) {
+            Log.d(TAG, "Query result = " + cursor.getInt(0));
+            ids.add(cursor.getInt(0));
         }
+        Log.d(TAG, "" + ids);
         cursor.close();
         db.close();
+        return ids;
     }
 
-    public void setConfig(String key, String value) {
+    public void setWordsDisplayed(List<Integer> ids) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            values.put(key, value);
+            for (Integer i : ids) {
+                values.put(KEY_WORDS_DISPLAYED, 1);
+                db.update(TABLE_WORDS, values, KEY_WORDS_ID + "=" + i, null);
+            }
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -167,16 +164,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void setConfigSavedIds(int[] ids) {
+    public void setConfig(String key, String value) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            values.put(KEY_CONFIG_SAVED_IDS, convertArrayToString(ids));
+            values.put(key, value);
+            db.update(TABLE_CONFIG, values, KEY_CONFIG_ID + "= 1", null);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried update config: saved ids");
+            Log.d(TAG, "Error when tried update config");
         } finally {
             db.endTransaction();
             db.close();
@@ -193,29 +191,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return value;
     }
 
-    public int[] getConfigSavedIds() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        int[] ids = new int[NUM_OF_WORDS];
-        Cursor cursor = db.rawQuery("SELECT `"+ KEY_CONFIG_SAVED_IDS +"` FROM `"+ TABLE_CONFIG +"`", null);
-        if (cursor.moveToNext()) {
-            for (int i = 0; i < ids.length; i++) {
-                ids[i] = cursor.getInt(0);
-            }
-        }
-        cursor.close();
-        db.close();
-        return ids;
-    }
-
     /**
      * Returns words where IDs as array is set in Config table
      * @param ids array of IDs separated by comma
      * @return map {@link Map} where key is word, value is description
      */
-    public Map<String, String> getWords(int[] ids) {
+    public Map<String, String> getWords(String ids) {
         SQLiteDatabase db = this.getReadableDatabase();
         Map<String, String> map = new HashMap<>();
-        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DISPLAYED +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_ID +"` = '"+ convertArrayToString(ids) +"';", null);
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DISPLAYED +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_ID +"` = '"+ ids +"';", null);
         while (cursor.moveToNext())
             map.put(cursor.getString(0), cursor.getString(1));
         cursor.close();
@@ -243,11 +227,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return tableString;
     }
 
-    public String convertArrayToString(int[] array) {
+    public String convertArrayToString(List<Integer> array) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < array.length; i ++) {
-            sb.append(array[i]);
-            if(i < array.length-1)
+        for (int i = 0; i < array.size(); i ++) {
+            sb.append(array.get(i));
+            if(i < array.size()-1)
                 sb.append(STR_SEPARATOR);
         }
         return sb.toString();

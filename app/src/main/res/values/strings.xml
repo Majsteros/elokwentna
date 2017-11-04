@@ -1,10 +1,22 @@
 <resources>
     <string name="app_name">Elokwentna</string>
-    <string name="title_activity_test">test</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="timer_text">Time to next update:</string>
+    <string name="timer_done">Done</string>
+    <string name="button_sync">Sync Data</string>
+    <string name="button_help">Help</string>
+    <string name="button_about">About me</string>
+    <string name="download_message">Downloading words…</string>
+    <string name="no_results">No results</string>
     <string name="word_default">Default Title</string>
     <string name="description_default">Lorem ipsum dolor sit amet tempor varius, nisl ac mauris tincidunt eget, ultricies porta. Aenean posuere risus. Etiam vestibulum vel, urna. Aliquam interdum ipsum vitae fringilla mollis. Proin imperdiet faucibus.</string>
-    <string name="timer_text">Time to next update:</string>
+    <string name="tab_words">Words</string>
+    <string name="tab_fav">Favourite</string>
+    <string name="tab_lib">Settings</string>
+    <!-- Toasts -->
+    <string name="t_afterDownload">Database was updated</string>
+    <string name="t_refusalUpdate">You cannot draw more words yet</string>
+    <string name="t_isUpdated">The database is up to date</string>
+    <string name="t_timedOut">Connection timed out</string>
+    <string name="t_refused">Connection refused</string>
+    <string name="t_defaultError">Unknown error occurred</string>
 </resources>
