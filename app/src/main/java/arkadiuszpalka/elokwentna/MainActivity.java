@@ -19,9 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import arkadiuszpalka.elokwentna.fragment.FavoriteFragment;
@@ -37,7 +35,9 @@ import arkadiuszpalka.elokwentna.handler.HttpHandler;
  */
 
 public class MainActivity extends AppCompatActivity {
+    BottomNavigationView bottomNavigationView;
     Context context;
+    private static final String ARG_SELECTED_ITEM = "arg_selected_item";
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
     private static final String TAG = MainActivity.class.getName();
 
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -66,7 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-        changeFragment(0); //First setup
+        if (savedInstanceState == null)
+            changeFragment(0);
+        else
+            changeFragment(savedInstanceState.getInt(ARG_SELECTED_ITEM));
     }
 
     private void changeFragment(int position) {
@@ -85,6 +88,23 @@ public class MainActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction()
                 .replace(R.id.frame_fragmentholder, fragment)
                 .commit();
+    }
+
+    private int getSelectedItem(BottomNavigationView bottomNavigationView){
+        Menu menu = bottomNavigationView.getMenu();
+        for (int i = 0; i < bottomNavigationView.getMenu().size(); i++){
+            MenuItem menuItem = menu.getItem(i);
+            if (menuItem.isChecked())
+                return i;
+        }
+        return 0;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "Zapisuję bundla u MainActivity!\nselectedItem = " + getSelectedItem(bottomNavigationView));
+        outState.putInt(ARG_SELECTED_ITEM, getSelectedItem(bottomNavigationView));
     }
 
     @Override

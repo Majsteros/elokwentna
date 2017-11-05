@@ -107,12 +107,10 @@ public class WordsFragment extends Fragment {
     private class CountDownTimer extends android.os.CountDownTimer{
         CountDownTimer(long startTime, long interval){
             super(startTime,interval);
-            Log.d(TAG, "Timer started: " + startTime);
         }
 
         @Override
         public void onTick(long millisUntilFinished) {
-            Log.d(TAG, ">>> millisUntilFinished = " + millisUntilFinished);
             timer.setText(String.format(Locale.getDefault(), "%02d:%02d:%02d",
                     TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                     TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60,
@@ -121,7 +119,6 @@ public class WordsFragment extends Fragment {
 
         @Override
         public void onFinish() {
-            Log.d(TAG, "Timer ended");
             //current millis - target millis
             displayWords();
         }
