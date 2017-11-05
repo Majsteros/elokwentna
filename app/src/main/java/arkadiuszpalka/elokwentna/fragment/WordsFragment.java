@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -83,7 +84,7 @@ public class WordsFragment extends Fragment {
                             - (new DateTime(DateTimeZone.UTC).getMillis())
                     , 1000).start();
         } else {
-            Log.d(TAG, "Zaktualizuj bazę!"); //TODO make toast!
+            Toast.makeText(context, getString(R.string.downlaod_words), Toast.LENGTH_LONG).show();
             for (int i = 1; i <= DatabaseHandler.NUM_OF_WORDS; i++)
                 wordList.add(new Word());
         }

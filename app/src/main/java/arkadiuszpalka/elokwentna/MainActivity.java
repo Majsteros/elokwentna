@@ -11,6 +11,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -28,13 +31,8 @@ import arkadiuszpalka.elokwentna.fragment.WordsFragment;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
 import arkadiuszpalka.elokwentna.handler.HttpHandler;
 
-/**
- * TODO Zrobić SwipeView
- * TODO Przenieść do innego pliku DownloadWordsTask
- * TODO Zrobić Option Menu
- */
-
 public class MainActivity extends AppCompatActivity {
+    ProgressBar progressBar;
     BottomNavigationView bottomNavigationView;
     Context context;
     private static final String ARG_SELECTED_ITEM = "arg_selected_item";
@@ -46,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
+        progressBar = (ProgressBar)findViewById(R.id.indeterminate_bar);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(
             new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -103,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(TAG, "Zapisuję bundla u MainActivity!\nselectedItem = " + getSelectedItem(bottomNavigationView));
         outState.putInt(ARG_SELECTED_ITEM, getSelectedItem(bottomNavigationView));
     }
 
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sync:
-                new DownloadWordsTask(context).execute();
+                new DownloadWordsTask(context, progressBar).execute();
                 return true;
             case R.id.getRandom:
                 return true;
@@ -134,16 +132,21 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Downloads in new thread words then inserts them to database.
      */
-    public static class DownloadWordsTask extends AsyncTask<Void, Void, String> {
-        String request;
+    private static class DownloadWordsTask extends AsyncTask<Void, Void, String> {
+        Context context;
+        ProgressBar progressBar;
         DatabaseHandler db;
+        String request;
         JSONObject jsonObj;
         HttpHandler httpHandler = new HttpHandler();
 
         /** Prepares request to database.
          * @param context Application context
          */
-        public DownloadWordsTask(Context context) {
+        DownloadWordsTask(Context context, ProgressBar progressBar) {
+            this.context = context;
+            this.progressBar = progressBar;
+            progressBar.setVisibility(View.VISIBLE);
             db = new DatabaseHandler(context);
             jsonObj = new JSONObject();
             try {
@@ -185,8 +188,11 @@ public class MainActivity extends AppCompatActivity {
                             DatabaseHandler.DATE_TIME_FORMATTER
                                     .print(new DateTime(DateTimeZone.UTC)));
                 } catch (JSONException e) {
-                    e.printStackTrace();
                     Log.d(TAG, "Error when tried encode JSON object");
+                    Toast.makeText(context, context.getString(R.string.t_isUpdated), Toast.LENGTH_SHORT).show();
+                } finally {
+                    Toast.makeText(context, context.getString(R.string.t_afterDownload), Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         }

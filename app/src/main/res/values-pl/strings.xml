@@ -6,6 +6,7 @@
     <string name="button_sync">Synchronizuj dane</string>
     <string name="button_help">Pomoc</string>
     <string name="button_about">O mnie</string>
+    <string name="downlaod_words">Musisz zaktualizować bazę danych! Wybierz Synchronizuj dane z górnego menu.</string>
     <string name="download_message">Pobieranie słów…</string>
     <string name="no_results">Brak wyników</string>
     <string name="word_default">Default Title</string>
@@ -15,7 +16,6 @@
     <string name="title_settings">Ustawienia</string>
     <!-- Toasts -->
     <string name="t_afterDownload">Baza słów została zaktualizowana.</string>
-    <string name="t_refusalUpdate">Nie możesz jeszcze wylosować słów.</string>
     <string name="t_isUpdated">Baza jest aktualna.</string>
     <string name="t_timedOut">Przekroczono czas połączenia. Serwer zbyt długo nie odpowiada.</string>
     <string name="t_refused">Serwer odrzucił połączenie.</string>
