@@ -2,7 +2,6 @@ package arkadiuszpalka.elokwentna.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ public class SettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         myInflatedView = inflater.inflate(R.layout.fragment_settings, container, false);
-        DatabaseHandler db = new DatabaseHandler(getActivity());
+        DatabaseHandler db = DatabaseHandler.getInstance(getActivity());
         TextView textConfig = (TextView)myInflatedView.findViewById(R.id.showTableConfig);
         TextView textWords = (TextView)myInflatedView.findViewById(R.id.showTableWords);
         textConfig.setText(db.getTableAsString(DatabaseHandler.TABLE_CONFIG));

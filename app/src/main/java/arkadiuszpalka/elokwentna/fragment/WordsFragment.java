@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,27 +24,46 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import arkadiuszpalka.elokwentna.R;
-import arkadiuszpalka.elokwentna.adapter.RecyclerViewAdapter;
+import arkadiuszpalka.elokwentna.adapter.WordsRecyclerViewAdapter;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
-
 public class WordsFragment extends Fragment {
     private static final String TAG = WordsFragment.class.getName();
+    public static final DateTimeFormatter DT_DEBUG = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
-    DatabaseHandler db;
-    List<Word> wordList;
+    CountDownTimer countDownTimer;
     TextView timer;
     Context context;
+    protected DatabaseHandler db;
+    protected List<Word> wordsList;
     private View myInflatedView;
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter recyclerViewAdapter;
+    protected WordsRecyclerViewAdapter wordsRecyclerViewAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = getActivity();
-        db = new DatabaseHandler(context);
-        displayWords();
+        db = DatabaseHandler.getInstance(context);
+        wordsList = new ArrayList<>(DatabaseHandler.NUM_OF_WORDS);
+        if (db.countWordsByWasDisplayed(0) > 0) {
+            if (db.checkNextWordUpdate())
+                drawWords();
+            setDrawnWords();
+        } else {
+            Toast.makeText(context, getString(R.string.download_words), Toast.LENGTH_LONG).show();
+            for (int i = 1; i <= DatabaseHandler.NUM_OF_WORDS; i++)
+                wordsList.add(new Word());
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            Log.d(TAG, "\nTimer was destroyed!");
+            countDownTimer.cancel();
+        }
     }
 
     @Override
@@ -52,47 +73,53 @@ public class WordsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerViewAdapter = new RecyclerViewAdapter(wordList);
-        recyclerView.setAdapter(recyclerViewAdapter);
+        wordsRecyclerViewAdapter = new WordsRecyclerViewAdapter(wordsList);
+        recyclerView.setAdapter(wordsRecyclerViewAdapter);
 
         timer = (TextView)myInflatedView.findViewById(R.id.timer_field);
 
         return myInflatedView;
     }
 
-    public void displayWords() {
-        wordList = new ArrayList<>();
-        if (db.countWords() > 0) {
-            if (db.checkNextWordUpdate()) {
-                List<Integer> ids = db.randomWords();
-                db.setConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS,
-                        db.convertArrayToString(ids));
-                db.setWordsDisplayed(ids);
-                db.setConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE, Long.toString(
-                        new DateTime(DateTimeZone.UTC)
-                                .getMillis() + DatabaseHandler.NUM_OF_MILLIS));
-            }
-            Map<String, String> map = db.getWords(
-                    db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS));
-            for (String key : map.keySet()) {
-                Log.d(TAG, ">>> Map: key = " + key + " value = " + map.get(key)); //debug
-                wordList.add(new Word(key, map.get(key)));
-            }
-            new CountDownTimer(
-                    (Long.parseLong(
-                            db.getConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE)))
-                            - (new DateTime(DateTimeZone.UTC).getMillis())
-                    , 1000).start();
-        } else {
-            Toast.makeText(context, getString(R.string.downlaod_words), Toast.LENGTH_LONG).show();
-            for (int i = 1; i <= DatabaseHandler.NUM_OF_WORDS; i++)
-                wordList.add(new Word());
-        }
+    public void updateRecyclerViewData() {
+        wordsRecyclerViewAdapter.notifyDataSetChanged();
     }
 
+    public void setDrawnWords() {
+        Map<String, String> map = db.getWords(
+                db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS));
+        for (String key : map.keySet()) {
+            Log.d(TAG, ">>> Map: key = " + key + " value = " + map.get(key)); //debug
+            if (wordsList.size() >= DatabaseHandler.NUM_OF_WORDS)
+                wordsList.clear();
+            wordsList.add(new Word(key, map.get(key)));
+        }
+        if (countDownTimer != null) {
+            Log.d(TAG, "\nTimer was destroyed!");
+            countDownTimer.cancel();
+        }
+        countDownTimer = new CountDownTimer(
+                (Long.parseLong(
+                        db.getConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE)))
+                        - (new DateTime(DateTimeZone.UTC).getMillis()),
+                1000);
+        countDownTimer.start();
+    }
+
+    public void drawWords() {
+        List<Integer> ids = db.randomWords();
+        db.setConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS,
+                db.convertArrayToString(ids));
+        db.setWordsDisplayed(ids);
+        db.setConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE,
+                Long.toString(new DateTime(DateTimeZone.UTC)
+                        .getMillis() + DatabaseHandler.NUM_OF_MILLIS));
+    }
+
+    //TODO make Word fields private and make the getter methods
     public class Word {
-        public String word;
-        public String description;
+        private String word;
+        private String description;
 
         Word() {
             this.word = getString(R.string.word_default);
@@ -103,11 +130,20 @@ public class WordsFragment extends Fragment {
             this.word = word;
             this.description = description;
         }
+
+        public String getWord() {
+            return word;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 
     private class CountDownTimer extends android.os.CountDownTimer{
         CountDownTimer(long startTime, long interval){
             super(startTime,interval);
+            Log.d(TAG, "\nTimer was created!");
         }
 
         @Override
@@ -121,7 +157,16 @@ public class WordsFragment extends Fragment {
         @Override
         public void onFinish() {
             //current millis - target millis
-            displayWords();
+            if (wordsList == null){
+                Log.d(TAG, "\nwordsList is null!") ;}
+            else{
+                Log.d(TAG, "\nwordsList is NOT null!");
+                Log.d(TAG, "\nwordsList:\nsize = " + wordsList.size());
+            }
+
+            drawWords();
+            setDrawnWords();
+            wordsRecyclerViewAdapter.swapWordsList(wordsList);
         }
     }
 }

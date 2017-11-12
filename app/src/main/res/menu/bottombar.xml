@@ -8,14 +8,21 @@
     app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/bottombaritem_favorite"
+        android:id="@+id/bottombaritem_favorites"
         android:icon="@drawable/ic_favorite_black_24dp"
         android:title="@string/title_favorites"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/bottombaritem_settings"
-        android:icon="@drawable/ic_settings_black_24dp"
+        android:id="@+id/bottombaritem_library"
+        android:icon="@drawable/ic_library_books_black_24dp"
         android:title="@string/title_settings"
         app:showAsAction="ifRoom"/>
+
+    <item
+    android:id="@+id/bottombaritem_settings"
+    android:icon="@drawable/ic_settings_black_24dp"
+    android:title="@string/title_settings"
+    app:showAsAction="ifRoom"/>
+
 </menu>

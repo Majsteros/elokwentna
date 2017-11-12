@@ -1,6 +1,7 @@
 package arkadiuszpalka.elokwentna;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import java.util.Map;
 import arkadiuszpalka.elokwentna.fragment.FavoriteFragment;
 import arkadiuszpalka.elokwentna.fragment.SettingsFragment;
 import arkadiuszpalka.elokwentna.fragment.WordsFragment;
+import arkadiuszpalka.elokwentna.fragment.LibraryFragment;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
 import arkadiuszpalka.elokwentna.handler.HttpHandler;
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
     BottomNavigationView bottomNavigationView;
     Context context;
+    protected DatabaseHandler db;
     private static final String ARG_SELECTED_ITEM = "arg_selected_item";
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
     private static final String TAG = MainActivity.class.getName();
@@ -44,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
+        db = DatabaseHandler.getInstance(context);
         progressBar = (ProgressBar)findViewById(R.id.indeterminate_bar);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -54,11 +58,14 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.bottombaritem_words:
                             changeFragment(0);
                             return true;
-                        case R.id.bottombaritem_favorite:
+                        case R.id.bottombaritem_favorites:
                             changeFragment(1);
                             return true;
-                        case R.id.bottombaritem_settings:
+                        case R.id.bottombaritem_library:
                             changeFragment(2);
+                            return true;
+                        case R.id.bottombaritem_settings:
+                            changeFragment(3);
                             return true;
                     }
                     return false;
@@ -71,21 +78,28 @@ public class MainActivity extends AppCompatActivity {
             changeFragment(savedInstanceState.getInt(ARG_SELECTED_ITEM));
     }
 
+
+
     private void changeFragment(int position) {
         Fragment fragment = null;
+        String fragmentTAG = null;
         switch (position) {
             case 0:
                 fragment = new WordsFragment();
+                fragmentTAG = "Words";
                 break;
             case 1:
                 fragment = new FavoriteFragment();
                 break;
             case 2:
+                fragment = new LibraryFragment();
+                break;
+            case 3:
                 fragment = new SettingsFragment();
                 break;
         }
         getFragmentManager().beginTransaction()
-                .replace(R.id.frame_fragmentholder, fragment)
+                .replace(R.id.frame_fragment_holder, fragment, fragmentTAG)
                 .commit();
     }
 
@@ -116,9 +130,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.sync:
-                new DownloadWordsTask(context, progressBar).execute();
+                new DownloadWordsTask(context, progressBar, getFragmentManager()).execute();
                 return true;
-            case R.id.getRandom:
+            case R.id.drop_tables:
+                db.dropTables();
                 return true;
             case R.id.about:
                 return true;
@@ -136,18 +151,21 @@ public class MainActivity extends AppCompatActivity {
         Context context;
         ProgressBar progressBar;
         DatabaseHandler db;
+        FragmentManager fragmentManager;
         String request;
         JSONObject jsonObj;
         HttpHandler httpHandler = new HttpHandler();
 
         /** Prepares request to database.
          * @param context Application context
+         * @param progressBar Progress bar to show progress
          */
-        DownloadWordsTask(Context context, ProgressBar progressBar) {
+        DownloadWordsTask(Context context, ProgressBar progressBar, FragmentManager fragmentManager) {
             this.context = context;
             this.progressBar = progressBar;
+            this.fragmentManager = fragmentManager;
             progressBar.setVisibility(View.VISIBLE);
-            db = new DatabaseHandler(context);
+            db = DatabaseHandler.getInstance(context);
             jsonObj = new JSONObject();
             try {
                 request = jsonObj.put(DatabaseHandler.KEY_CONFIG_LAST_UPDATED, db.getConfig(DatabaseHandler.KEY_CONFIG_LAST_UPDATED)).toString();
@@ -187,9 +205,13 @@ public class MainActivity extends AppCompatActivity {
                     db.setConfig(DatabaseHandler.KEY_CONFIG_LAST_UPDATED,
                             DatabaseHandler.DATE_TIME_FORMATTER
                                     .print(new DateTime(DateTimeZone.UTC)));
+                    Toast.makeText(context, context.getString(R.string.t_isUpdated), Toast.LENGTH_SHORT).show();
+                    WordsFragment fragment = (WordsFragment)fragmentManager.findFragmentByTag("Words");
+                    fragment.drawWords();
+                    fragment.setDrawnWords();
+                    fragment.updateRecyclerViewData();
                 } catch (JSONException e) {
                     Log.d(TAG, "Error when tried encode JSON object");
-                    Toast.makeText(context, context.getString(R.string.t_isUpdated), Toast.LENGTH_SHORT).show();
                 } finally {
                     Toast.makeText(context, context.getString(R.string.t_afterDownload), Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);

@@ -12,8 +12,11 @@ import java.util.List;
 import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.fragment.WordsFragment;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.WordViewHolder> {
+//TODO Add toast when no more words,
+//TODO Add library recycler view.
+public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecyclerViewAdapter.WordViewHolder> {
     private List<WordsFragment.Word> wordsList;
+    private static final String TAG = WordsRecyclerViewAdapter.class.getName();
 
     static class WordViewHolder extends RecyclerView.ViewHolder {
         CardView cardView;
@@ -27,18 +30,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    public RecyclerViewAdapter(List<WordsFragment.Word> wordsList) {
+    public WordsRecyclerViewAdapter(List<WordsFragment.Word> wordsList) {
         this.wordsList = wordsList;
     }
 
-    public void swap(List<WordsFragment.Word> newWordsList) {
+    public void swapWordsList(List<WordsFragment.Word> wordsList) {
         if (wordsList == null || wordsList.size() == 0)
             return;
-        if (newWordsList != null && newWordsList.size() > 0) {
-            wordsList.clear();
-            wordsList.addAll(newWordsList);
-            notifyDataSetChanged();
-        }
+        this.wordsList = wordsList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -49,8 +49,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(WordViewHolder holder, int position) {
-        holder.wordWord.setText(wordsList.get(position).word);
-        holder.wordDescription.setText(wordsList.get(position).description);
+        holder.wordWord.setText(wordsList.get(position).getWord());
+        holder.wordDescription.setText(wordsList.get(position).getDescription());
     }
 
     @Override

@@ -21,12 +21,13 @@ import java.util.Map;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private Context context;
+    private static DatabaseHandler instance;
 
     private static final String DATABASE_NAME = "elokwentna";
     private static final int DATABASE_VERSION = 1;
 
     //Number of millis to next words update
-    public static final int NUM_OF_MILLIS = 28800000; //8640000
+    public static final int NUM_OF_MILLIS = 3600000; //8640000 28800000 3600000
     private static final String STR_SEPARATOR = ",";
     public static final int NUM_OF_WORDS = 3;
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
@@ -49,9 +50,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_CONFIG_SAVED_IDS = "saved_ids";
     private static final String TAG = DatabaseHandler.class.getName();
 
-    public DatabaseHandler(Context context) {
+    private DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
+    }
+
+    public static DatabaseHandler getInstance(Context context) {
+        if (instance == null) {
+            instance = new DatabaseHandler(context.getApplicationContext());
+        }
+        return instance;
     }
 
     @Override
@@ -89,9 +97,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return new DateTime(DateTimeZone.UTC).getMillis() > Long.parseLong(getConfig(KEY_CONFIG_NEXT_WORD_UPDATE));
     }
 
-    public int countWords() {
+    public void dropTables() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        for (String table : ALL_TABLES) {
+            db.execSQL("DROP TABLE IF EXISTS " + table);
+        }
+        onCreate(db);
+        db.close();
+    }
+
+    /**
+     * @param binaryBoolean Integer ranges from 0 to 1
+     * @return count Number of words fulfilling the condition
+     */
+    public int countWordsByWasDisplayed(int binaryBoolean) {
+        if (binaryBoolean > 1 || binaryBoolean < 0)
+            return 0;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM `"+ TABLE_WORDS +"`", null);
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM `"+ TABLE_WORDS +"` WHERE `was_displayed` = '"+ binaryBoolean +"'", null);
         cursor.moveToNext();
         int count = cursor.getInt(0);
         cursor.close();
@@ -204,6 +227,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_ID +"` IN ("+ ids +")", null);
         if (cursor.getCount() == 0)
             Log.d(TAG, "getWords returned zero results!");
+        while (cursor.moveToNext())
+            map.put(cursor.getString(0), cursor.getString(1));
+        cursor.close();
+        db.close();
+        return map;
+    }
+
+    public Map<String, String> getWordsWasDisplayed(String ids) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Map<String, String> map = new HashMap<>();
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_DISPLAYED +"` = 1)", null);
+        if (cursor.getCount() == 0)
+            Log.d(TAG, "getWordsWasDisplayed returned zero results!");
         while (cursor.moveToNext())
             map.put(cursor.getString(0), cursor.getString(1));
         cursor.close();

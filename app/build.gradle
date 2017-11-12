@@ -33,5 +33,6 @@ dependencies {
     compile 'joda-time:joda-time:2.9.9'
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
     compile 'com.android.support:support-vector-drawable:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
     testCompile 'junit:junit:4.12'
 }
