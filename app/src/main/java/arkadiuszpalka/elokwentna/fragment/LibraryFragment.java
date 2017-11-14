@@ -1,11 +1,10 @@
 package arkadiuszpalka.elokwentna.fragment;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,9 @@ public class LibraryFragment extends Fragment {
         this.context = getActivity();
         db = DatabaseHandler.getInstance(context);
         wordsList = new ArrayList<>();
-        setDisplayedWordsList();
+        Map<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_DISPLAYED);
+        for (String key : map.keySet())
+            wordsList.add(new Word(key, map.get(key)));
     }
 
     @Override
@@ -48,11 +49,5 @@ public class LibraryFragment extends Fragment {
         recyclerView.setAdapter(libraryRecyclerViewAdapter);
 
         return myInflatedView;
-    }
-
-    public void setDisplayedWordsList() {
-        Map<String, String> map = db.getWordsWasDisplayed();
-        for (String key : map.keySet())
-            wordsList.add(new Word(key, map.get(key)));
     }
 }

@@ -21,7 +21,7 @@ import java.util.Map;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private Context context;
-    private static DatabaseHandler instance;
+    public static DatabaseHandler instance;
 
     private static final String DATABASE_NAME = "elokwentna";
     private static final int DATABASE_VERSION = 2;
@@ -41,8 +41,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_WORDS_ID  = "id_word";
     private static final String KEY_WORDS_WORD  = "word";
     private static final String KEY_WORDS_DESCRIPTION  = "description";
-    private static final String KEY_WORDS_DISPLAYED  = "was_displayed";
-    private static final String KEY_WORDS_FAVORITE = "favorite";
+    public static final String KEY_WORDS_DISPLAYED  = "was_displayed";
+    public static final String KEY_WORDS_FAVORITE = "favorite";
 
     //Config table columns names
     private static final String KEY_CONFIG_ID = "id_config";
@@ -248,12 +248,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return map;
     }
 
-    public Map<String, String> getWordsWasDisplayed() {
+    public Map<String, String> getWordsBy(String column) {
         SQLiteDatabase db = this.getReadableDatabase();
         Map<String, String> map = new HashMap<>();
-        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_DISPLAYED +"` = 1", null);
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ column +"` = 1", null);
         if (cursor.getCount() == 0)
-            Log.d(TAG, "getWordsWasDisplayed returned zero results!");
+            Log.d(TAG, "getWordsBy returned zero results!");
         while (cursor.moveToNext())
             map.put(cursor.getString(0), cursor.getString(1));
         cursor.close();

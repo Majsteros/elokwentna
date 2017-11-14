@@ -1,5 +1,8 @@
 package arkadiuszpalka.elokwentna.adapter;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import arkadiuszpalka.elokwentna.R;
+import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
 import arkadiuszpalka.elokwentna.words.Word;
 
 //TODO Add toast when no more words,
@@ -33,6 +37,24 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecycler
                 @Override
                 public boolean onLongClick(View v) {
                     Log.d(TAG, "Przytrzymałeś na elemencie: " + getLayoutPosition() + " | " + wordWord.getText());
+                    Context context = itemView.getContext();
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                    dialogBuilder.setMessage(R.string.dialog_add_favorite)
+                            .setPositiveButton(R.string.dialog_yes,
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            DatabaseHandler db = DatabaseHandler.getInstance(itemView.getContext());
+                                            db.setWordsFavorite(wordWord.getText().toString());
+                                            dialog.dismiss();
+                                        }
+                                    }).setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialogBuilder.show();
                     return true;
                 }
             });
