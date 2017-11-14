@@ -1,6 +1,8 @@
 package arkadiuszpalka.elokwentna.fragment;
 
+import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,8 +26,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import arkadiuszpalka.elokwentna.R;
+import arkadiuszpalka.elokwentna.words.Word;
 import arkadiuszpalka.elokwentna.adapter.WordsRecyclerViewAdapter;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
+
 public class WordsFragment extends Fragment {
     private static final String TAG = WordsFragment.class.getName();
     public static final DateTimeFormatter DT_DEBUG = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss:SSS");
@@ -46,7 +50,7 @@ public class WordsFragment extends Fragment {
         this.context = getActivity();
         db = DatabaseHandler.getInstance(context);
         wordsList = new ArrayList<>(DatabaseHandler.NUM_OF_WORDS);
-        if (db.countWordsByWasDisplayed(0) > 0) {
+        if (db.countWordsByWasDisplayed(false) > 0) {
             if (db.checkNextWordUpdate())
                 drawWords();
             setDrawnWords();
@@ -69,7 +73,7 @@ public class WordsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         myInflatedView = inflater.inflate(R.layout.fragment_words, container, false);
-        recyclerView = (RecyclerView)myInflatedView.findViewById(R.id.words_recyler_view);
+        recyclerView = (RecyclerView)myInflatedView.findViewById(R.id.words_recycler_view);
         recyclerView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
@@ -116,29 +120,7 @@ public class WordsFragment extends Fragment {
                         .getMillis() + DatabaseHandler.NUM_OF_MILLIS));
     }
 
-    //TODO make Word fields private and make the getter methods
-    public class Word {
-        private String word;
-        private String description;
 
-        Word() {
-            this.word = getString(R.string.word_default);
-            this.description = getString(R.string.description_default);
-        }
-
-        Word(String word, String description) {
-            this.word = word;
-            this.description = description;
-        }
-
-        public String getWord() {
-            return word;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-    }
 
     private class CountDownTimer extends android.os.CountDownTimer{
         CountDownTimer(long startTime, long interval){

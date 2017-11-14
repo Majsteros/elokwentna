@@ -24,7 +24,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static DatabaseHandler instance;
 
     private static final String DATABASE_NAME = "elokwentna";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     //Number of millis to next words update
     public static final int NUM_OF_MILLIS = 3600000; //8640000 28800000 3600000
@@ -42,6 +42,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_WORDS_WORD  = "word";
     private static final String KEY_WORDS_DESCRIPTION  = "description";
     private static final String KEY_WORDS_DISPLAYED  = "was_displayed";
+    private static final String KEY_WORDS_FAVORITE = "favorite";
 
     //Config table columns names
     private static final String KEY_CONFIG_ID = "id_config";
@@ -68,7 +69,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_WORDS_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_WORDS_WORD + " varchar(65) NOT NULL,"
                 + KEY_WORDS_DESCRIPTION + " varchar(250) NOT NULL,"
-                + KEY_WORDS_DISPLAYED + " INTEGER DEFAULT 0);";
+                + KEY_WORDS_DISPLAYED + " INTEGER DEFAULT 0,"
+                + KEY_WORDS_FAVORITE + " INTEGER DEFAULT 0);";
         String CREATE_CONFIG_TABLE = "CREATE TABLE IF NOT EXISTS "+ TABLE_CONFIG +" ("
                 + KEY_CONFIG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
                 + KEY_CONFIG_LAST_UPDATED + " DATETIME,"
@@ -106,13 +108,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    /**
-     * @param binaryBoolean Integer ranges from 0 to 1
-     * @return count Number of words fulfilling the condition
-     */
-    public int countWordsByWasDisplayed(int binaryBoolean) {
-        if (binaryBoolean > 1 || binaryBoolean < 0)
-            return 0;
+    public int countWordsByWasDisplayed(boolean isDisplayed) {
+        int binaryBoolean = isDisplayed ? 1 : 0;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM `"+ TABLE_WORDS +"` WHERE `was_displayed` = '"+ binaryBoolean +"'", null);
         cursor.moveToNext();
@@ -177,12 +174,29 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             for (Integer i : ids) {
                 values.put(KEY_WORDS_DISPLAYED, 1);
-                db.update(TABLE_WORDS, values, KEY_WORDS_ID + "=" + i, null);
+                db.update(TABLE_WORDS, values, KEY_WORDS_ID + "= ?", new String[] {i.toString()});
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried update config");
+            Log.d(TAG, "Error when tried update words by displayed");
+        } finally {
+            db.endTransaction();
+            db.close();
+        }
+    }
+
+    public void setWordsFavorite(String word) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_WORDS_FAVORITE, 1);
+            db.update(TABLE_WORDS, values, KEY_WORDS_WORD + "= ?", new String[] {word});
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "Error when tried update words by favorite");
         } finally {
             db.endTransaction();
             db.close();
@@ -234,10 +248,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return map;
     }
 
-    public Map<String, String> getWordsWasDisplayed(String ids) {
+    public Map<String, String> getWordsWasDisplayed() {
         SQLiteDatabase db = this.getReadableDatabase();
         Map<String, String> map = new HashMap<>();
-        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_DISPLAYED +"` = 1)", null);
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ KEY_WORDS_DISPLAYED +"` = 1", null);
         if (cursor.getCount() == 0)
             Log.d(TAG, "getWordsWasDisplayed returned zero results!");
         while (cursor.moveToNext())

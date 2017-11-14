@@ -13,6 +13,7 @@
     <string name="description_default">Lorem ipsum dolor sit amet tempor varius, nisl ac mauris tincidunt eget, ultricies porta. Aenean posuere risus. Etiam vestibulum vel, urna. Aliquam interdum ipsum vitae fringilla mollis. Proin imperdiet faucibus.</string>
     <string name="title_words">Słówka</string>
     <string name="title_favorites">Ulubione</string>
+    <string name="title_library">Biblioteka</string>
     <string name="title_settings">Ustawienia</string>
     <!-- Toasts -->
     <string name="t_afterDownload">Baza słów została zaktualizowana.</string>
@@ -20,4 +21,8 @@
     <string name="t_timedOut">Przekroczono czas połączenia. Serwer zbyt długo nie odpowiada.</string>
     <string name="t_refused">Serwer odrzucił połączenie.</string>
     <string name="t_defaultError">Wystąpił nieznany błąd.</string>
+    <!-- Dialogs -->
+    <string name="dialog_add_favorite">Czy dodać to słowo do ulubionych?</string>
+    <string name="dialog_yes">Tak</string>
+    <string name="dialog_no">Nie</string>
 </resources>

@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import arkadiuszpalka.elokwentna.fragment.FavoriteFragment;
+import arkadiuszpalka.elokwentna.fragment.FavoritesFragment;
 import arkadiuszpalka.elokwentna.fragment.SettingsFragment;
 import arkadiuszpalka.elokwentna.fragment.WordsFragment;
 import arkadiuszpalka.elokwentna.fragment.LibraryFragment;
@@ -40,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
     protected DatabaseHandler db;
     private static final String ARG_SELECTED_ITEM = "arg_selected_item";
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
+    private static final String WORDS_FRAGMENT_TAG = "words";
+    private static final String FAVORITES_FRAGMENT_TAG = "favorites";
+    private static final String LIBRARY_FRAGMENT_TAG = "library";
+    private static final String SETTINGS_FRAGMENT_TAG = "settings";
     private static final String TAG = MainActivity.class.getName();
 
     @Override
@@ -86,16 +90,19 @@ public class MainActivity extends AppCompatActivity {
         switch (position) {
             case 0:
                 fragment = new WordsFragment();
-                fragmentTAG = "Words";
+                fragmentTAG = WORDS_FRAGMENT_TAG;
                 break;
             case 1:
-                fragment = new FavoriteFragment();
+                fragment = new FavoritesFragment();
+                fragmentTAG = FAVORITES_FRAGMENT_TAG;
                 break;
             case 2:
                 fragment = new LibraryFragment();
+                fragmentTAG = LIBRARY_FRAGMENT_TAG;
                 break;
             case 3:
                 fragment = new SettingsFragment();
+                fragmentTAG = SETTINGS_FRAGMENT_TAG;
                 break;
         }
         getFragmentManager().beginTransaction()
@@ -206,10 +213,12 @@ public class MainActivity extends AppCompatActivity {
                             DatabaseHandler.DATE_TIME_FORMATTER
                                     .print(new DateTime(DateTimeZone.UTC)));
                     Toast.makeText(context, context.getString(R.string.t_isUpdated), Toast.LENGTH_SHORT).show();
-                    WordsFragment fragment = (WordsFragment)fragmentManager.findFragmentByTag("Words");
-                    fragment.drawWords();
-                    fragment.setDrawnWords();
-                    fragment.updateRecyclerViewData();
+                    WordsFragment fragment = (WordsFragment)fragmentManager.findFragmentByTag(WORDS_FRAGMENT_TAG);
+                    if (fragment != null) {
+                        fragment.drawWords();
+                        fragment.setDrawnWords();
+                        fragment.updateRecyclerViewData();
+                    }
                 } catch (JSONException e) {
                     Log.d(TAG, "Error when tried encode JSON object");
                 } finally {

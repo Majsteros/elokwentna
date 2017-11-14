@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import arkadiuszpalka.elokwentna.R;
 
-public class FavoriteFragment extends Fragment {
+public class FavoritesFragment extends Fragment {
     private View myInflatedView;
 
     @Override

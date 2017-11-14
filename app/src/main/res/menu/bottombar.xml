@@ -16,7 +16,7 @@
     <item
         android:id="@+id/bottombaritem_library"
         android:icon="@drawable/ic_library_books_black_24dp"
-        android:title="@string/title_settings"
+        android:title="@string/title_library"
         app:showAsAction="ifRoom"/>
 
     <item
