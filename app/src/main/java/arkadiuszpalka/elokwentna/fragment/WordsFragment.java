@@ -1,8 +1,6 @@
 package arkadiuszpalka.elokwentna.fragment;
 
-import android.app.DialogFragment;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +14,6 @@ import android.widget.Toast;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,23 +22,19 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import arkadiuszpalka.elokwentna.R;
-import arkadiuszpalka.elokwentna.words.Word;
 import arkadiuszpalka.elokwentna.adapter.WordsRecyclerViewAdapter;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
+import arkadiuszpalka.elokwentna.words.Word;
 
 public class WordsFragment extends Fragment {
     private static final String TAG = WordsFragment.class.getName();
-    public static final DateTimeFormatter DT_DEBUG = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
-    CountDownTimer countDownTimer;
-    TextView timer;
-    Context context;
-    protected DatabaseHandler db;
-    protected List<Word> wordsList;
-    private View myInflatedView;
-    private RecyclerView recyclerView;
-    protected WordsRecyclerViewAdapter wordsRecyclerViewAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private CountDownTimer countDownTimer;
+    private TextView timer;
+    private Context context;
+    private DatabaseHandler db;
+    private List<Word> wordsList;
+    private WordsRecyclerViewAdapter wordsRecyclerViewAdapter;
 
     @Override
     public void onAttach(Context context) {
@@ -72,15 +64,15 @@ public class WordsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
-        myInflatedView = inflater.inflate(R.layout.fragment_words, container, false);
-        recyclerView = (RecyclerView)myInflatedView.findViewById(R.id.words_recycler_view);
+        View myInflatedView = inflater.inflate(R.layout.fragment_words, container, false);
+        RecyclerView recyclerView = (RecyclerView) myInflatedView.findViewById(R.id.words_recycler_view);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(context);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
         wordsRecyclerViewAdapter = new WordsRecyclerViewAdapter(wordsList);
         recyclerView.setAdapter(wordsRecyclerViewAdapter);
 
-        timer = (TextView)myInflatedView.findViewById(R.id.timer_field);
+        timer = (TextView) myInflatedView.findViewById(R.id.timer_field);
 
         return myInflatedView;
     }
@@ -105,8 +97,8 @@ public class WordsFragment extends Fragment {
         countDownTimer = new CountDownTimer(
                 (Long.parseLong(
                         db.getConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE)))
-                        - (new DateTime(DateTimeZone.UTC).getMillis()),
-                1000);
+                        - (new DateTime(DateTimeZone.UTC).getMillis())
+        );
         countDownTimer.start();
     }
 
@@ -122,9 +114,9 @@ public class WordsFragment extends Fragment {
 
 
 
-    private class CountDownTimer extends android.os.CountDownTimer{
-        CountDownTimer(long startTime, long interval){
-            super(startTime,interval);
+        private class CountDownTimer extends android.os.CountDownTimer{
+        CountDownTimer(long startTime){
+            super(startTime, (long) 1000);
             Log.d(TAG, "\nTimer was created!");
         }
 

@@ -27,16 +27,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import arkadiuszpalka.elokwentna.fragment.FavoritesFragment;
+import arkadiuszpalka.elokwentna.fragment.LibraryFragment;
 import arkadiuszpalka.elokwentna.fragment.SettingsFragment;
 import arkadiuszpalka.elokwentna.fragment.WordsFragment;
-import arkadiuszpalka.elokwentna.fragment.LibraryFragment;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
 import arkadiuszpalka.elokwentna.handler.HttpHandler;
 
 public class MainActivity extends AppCompatActivity {
-    ProgressBar progressBar;
-    BottomNavigationView bottomNavigationView;
-    Context context;
+    private ProgressBar progressBar;
+    private BottomNavigationView bottomNavigationView;
+    private Context context;
     protected DatabaseHandler db;
     private static final String ARG_SELECTED_ITEM = "arg_selected_item";
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";

@@ -19,19 +19,14 @@ import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
 import arkadiuszpalka.elokwentna.words.Word;
 
 public class LibraryFragment extends Fragment {
-    private DatabaseHandler db;
     private Context context;
-    private View myInflatedView;
     private List<Word> wordsList;
-    private RecyclerView recyclerView;
-    private LibraryRecyclerViewAdapter libraryRecyclerViewAdapter;
-    private RecyclerView.LayoutManager layoutManager;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = getActivity();
-        db = DatabaseHandler.getInstance(context);
+        DatabaseHandler db = DatabaseHandler.getInstance(context);
         wordsList = new ArrayList<>();
         Map<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_DISPLAYED);
         for (String key : map.keySet())
@@ -40,12 +35,12 @@ public class LibraryFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        myInflatedView = inflater.inflate(R.layout.fragment_library, container, false);
-        recyclerView = (RecyclerView)myInflatedView.findViewById(R.id.library_recycler_view);
+        View myInflatedView = inflater.inflate(R.layout.fragment_library, container, false);
+        RecyclerView recyclerView = (RecyclerView) myInflatedView.findViewById(R.id.library_recycler_view);
         recyclerView.setHasFixedSize(true);
-        layoutManager = new LinearLayoutManager(context);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
-        libraryRecyclerViewAdapter = new LibraryRecyclerViewAdapter(wordsList);
+        LibraryRecyclerViewAdapter libraryRecyclerViewAdapter = new LibraryRecyclerViewAdapter(wordsList);
         recyclerView.setAdapter(libraryRecyclerViewAdapter);
 
         return myInflatedView;

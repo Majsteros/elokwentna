@@ -1,9 +1,6 @@
 package arkadiuszpalka.elokwentna.words;
 
-import android.app.Application;
 import android.content.res.Resources;
-
-import arkadiuszpalka.elokwentna.R;
 
 public class Word {
     private String word;

@@ -17,14 +17,13 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
     private List<Word> wordsList;
 
     static class LibraryWordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        CardView cardView;
         TextView wordDescription, wordWord;
         View arrowView;
         private boolean isViewExpanded = false;
 
         LibraryWordViewHolder(View itemView) {
             super(itemView);
-            cardView = (CardView)itemView.findViewById(R.id.library_card_view);
+            CardView cardView = (CardView)itemView.findViewById(R.id.library_card_view);
             wordWord = (TextView)itemView.findViewById(R.id.word_title);
             wordDescription = (TextView)itemView.findViewById(R.id.word_description);
             arrowView = itemView.findViewById(R.id.arrow_down);

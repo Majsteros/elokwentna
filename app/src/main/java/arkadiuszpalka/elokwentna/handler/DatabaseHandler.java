@@ -21,7 +21,7 @@ import java.util.Map;
 public class DatabaseHandler extends SQLiteOpenHelper {
 
     private Context context;
-    public static DatabaseHandler instance;
+    private static DatabaseHandler instance;
 
     private static final String DATABASE_NAME = "elokwentna";
     private static final int DATABASE_VERSION = 2;

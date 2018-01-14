@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,19 +23,17 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecycler
     private static final String TAG = WordsRecyclerViewAdapter.class.getName();
 
     static class WordViewHolder extends RecyclerView.ViewHolder {
-        CardView cardView;
         TextView wordDescription, wordWord;
 
         WordViewHolder(final View itemView) {
             super(itemView);
-            cardView = (CardView)itemView.findViewById(R.id.word_card_view);
+            CardView cardView = (CardView)itemView.findViewById(R.id.word_card_view);
             wordWord = (TextView)itemView.findViewById(R.id.word_title);
             wordDescription = (TextView)itemView.findViewById(R.id.word_description);
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Log.d(TAG, "Przytrzymałeś na elemencie: " + getLayoutPosition() + " | " + wordWord.getText());
                     Context context = itemView.getContext();
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
                     dialogBuilder.setMessage(R.string.dialog_add_favorite)
