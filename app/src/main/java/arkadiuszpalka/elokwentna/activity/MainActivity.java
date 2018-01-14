@@ -1,4 +1,4 @@
-package arkadiuszpalka.elokwentna;
+package arkadiuszpalka.elokwentna.activity;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.fragment.FavoritesFragment;
 import arkadiuszpalka.elokwentna.fragment.LibraryFragment;
 import arkadiuszpalka.elokwentna.fragment.SettingsFragment;

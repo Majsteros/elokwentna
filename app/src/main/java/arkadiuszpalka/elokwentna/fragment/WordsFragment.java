@@ -1,6 +1,8 @@
 package arkadiuszpalka.elokwentna.fragment;
 
 import android.app.Fragment;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.adapter.WordsRecyclerViewAdapter;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
+import arkadiuszpalka.elokwentna.widget.WidgetProvider;
 import arkadiuszpalka.elokwentna.words.Word;
 
 public class WordsFragment extends Fragment {
@@ -48,8 +51,7 @@ public class WordsFragment extends Fragment {
             setDrawnWords();
         } else {
             Toast.makeText(context, getString(R.string.download_words), Toast.LENGTH_LONG).show();
-            for (int i = 1; i <= DatabaseHandler.NUM_OF_WORDS; i++)
-                wordsList.add(new Word());
+            wordsList.add(new Word(getString(R.string.word_default), getString(R.string.description_default)));
         }
     }
 
@@ -78,28 +80,43 @@ public class WordsFragment extends Fragment {
     }
 
     public void updateRecyclerViewData() {
-        wordsRecyclerViewAdapter.notifyDataSetChanged();
+        wordsRecyclerViewAdapter.swapWordsList(wordsList);
+    }
+
+    public void updateWidgetData() {
+        int [] appWidgetIds = AppWidgetManager.getInstance(context)
+                .getAppWidgetIds(
+                        new ComponentName(context, WidgetProvider.class)
+                );
+        AppWidgetManager.getInstance(context).notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_words);
     }
 
     public void setDrawnWords() {
         Map<String, String> map = db.getWords(
-                db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS));
+                db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS)
+        );
+        if (wordsList.size() > 0)
+            wordsList.clear();
         for (String key : map.keySet()) {
-            Log.d(TAG, ">>> Map: key = " + key + " value = " + map.get(key)); //debug
-            if (wordsList.size() >= DatabaseHandler.NUM_OF_WORDS)
-                wordsList.clear();
+            Log.d(TAG, ">>> Map: key = " + key + " value = " + map.get(key));
             wordsList.add(new Word(key, map.get(key)));
         }
-        if (countDownTimer != null) {
-            Log.d(TAG, "\nTimer was destroyed!");
-            countDownTimer.cancel();
+        Log.d(TAG, "word list size = " + wordsList.size());
+        if (map.size() > 0) {
+            if (countDownTimer != null) {
+                Log.d(TAG, "\nTimer was destroyed!");
+                countDownTimer.cancel();
+            }
+            countDownTimer = new CountDownTimer(
+                    (Long.parseLong(
+                            db.getConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE)))
+                            - (new DateTime(DateTimeZone.UTC).getMillis())
+            );
+            countDownTimer.start();
+        } else {
+            wordsList.add(new Word(getString(R.string.word_default), getString(R.string.description_default)));
         }
-        countDownTimer = new CountDownTimer(
-                (Long.parseLong(
-                        db.getConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE)))
-                        - (new DateTime(DateTimeZone.UTC).getMillis())
-        );
-        countDownTimer.start();
+        updateWidgetData();
     }
 
     public void drawWords() {
@@ -108,11 +125,11 @@ public class WordsFragment extends Fragment {
                 db.convertArrayToString(ids));
         db.setWordsDisplayed(ids);
         db.setConfig(DatabaseHandler.KEY_CONFIG_NEXT_WORD_UPDATE,
-                Long.toString(new DateTime(DateTimeZone.UTC)
-                        .getMillis() + DatabaseHandler.NUM_OF_MILLIS));
+                Long.toString(
+                        new DateTime(DateTimeZone.UTC).getMillis()
+                                + DatabaseHandler.NUM_OF_MILLIS)
+                );
     }
-
-
 
         private class CountDownTimer extends android.os.CountDownTimer{
         CountDownTimer(long startTime){

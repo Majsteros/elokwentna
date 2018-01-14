@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="arkadiuszpalka.elokwentna.MainActivity">
+    tools:context="arkadiuszpalka.elokwentna.activity.MainActivity">
 
     <ProgressBar
         android:id="@+id/indeterminate_bar"

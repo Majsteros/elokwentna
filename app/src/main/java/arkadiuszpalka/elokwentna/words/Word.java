@@ -1,15 +1,8 @@
 package arkadiuszpalka.elokwentna.words;
 
-import android.content.res.Resources;
-
 public class Word {
     private String word;
     private String description;
-
-    public Word() {
-        this.word = Resources.getSystem().getString(android.R.string.untitled);
-        this.description = Resources.getSystem().getString(android.R.string.untitled);
-    }
 
     public Word(String word, String description) {
         this.word = word;

@@ -9,8 +9,8 @@
     <string name="download_words">Musisz zaktualizować bazę danych! Wybierz Synchronizuj dane z górnego menu.</string>
     <string name="download_message">Pobieranie słów…</string>
     <string name="no_more_results">Brak wyników</string>
-    <string name="word_default">Default Title</string>
-    <string name="description_default">Lorem ipsum dolor sit amet tempor varius, nisl ac mauris tincidunt eget, ultricies porta. Aenean posuere risus. Etiam vestibulum vel, urna. Aliquam interdum ipsum vitae fringilla mollis. Proin imperdiet faucibus.</string>
+    <string name="word_default">Brak słów!</string>
+    <string name="description_default">Zaktualizuj bazę danych za pomocą opcji Synchronizuj dane z górnego menu.</string>
     <string name="title_words">Słówka</string>
     <string name="title_favorites">Ulubione</string>
     <string name="title_library">Biblioteka</string>

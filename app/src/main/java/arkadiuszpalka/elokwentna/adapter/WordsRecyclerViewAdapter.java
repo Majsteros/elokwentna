@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,6 @@ import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
 import arkadiuszpalka.elokwentna.words.Word;
 
-//TODO Add toast when no more words,
-//TODO Add library recycler view.
 public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecyclerViewAdapter.WordViewHolder> {
     private List<Word> wordsList;
     private static final String TAG = WordsRecyclerViewAdapter.class.getName();
@@ -66,6 +65,9 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecycler
         if (wordsList == null || wordsList.size() == 0)
             return;
         this.wordsList = wordsList;
+        for (Word word : wordsList) {
+            Log.d(TAG, "word list = " + word.getWord());
+        }
         notifyDataSetChanged();
     }
 

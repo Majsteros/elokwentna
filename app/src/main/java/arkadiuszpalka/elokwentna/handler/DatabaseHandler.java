@@ -24,10 +24,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static DatabaseHandler instance;
 
     private static final String DATABASE_NAME = "elokwentna";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
 
     //Number of millis to next words update
-    public static final int NUM_OF_MILLIS = 3600000; //8640000 28800000 3600000
+    public static final int NUM_OF_MILLIS = 86400000; //86400000 28800000 3600000
     private static final String STR_SEPARATOR = ",";
     public static final int NUM_OF_WORDS = 3;
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");

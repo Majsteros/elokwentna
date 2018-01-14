@@ -8,8 +8,7 @@
     <string name="download_words">You must update the database! Select Sync Data from top menu.</string>
     <string name="download_message">Downloading words…</string>
     <string name="no_more_results">No words. Try to update your database. Select Sync Data from top menu.</string>
-    <string name="word_default">Default Title</string>
-    <string name="description_default">Lorem ipsum dolor sit amet tempor varius, nisl ac mauris tincidunt eget, ultricies porta. Aenean posuere risus. Etiam vestibulum vel, urna. Aliquam interdum ipsum vitae fringilla mollis. Proin imperdiet faucibus.</string>
+    <string name="word_default">No words!</string>
     <string name="title_words">Words</string>
     <string name="title_favorites">Favorites</string>
     <string name="title_library">Library</string>
@@ -25,4 +24,5 @@
     <string name="dialog_add_favorite">Do you want add this word to your favourites?</string>
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
+    <string name="description_default">Update the database using an option Sync Data from upper menu.</string>
 </resources>
