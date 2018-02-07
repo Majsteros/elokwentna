@@ -18,12 +18,11 @@ public class WidgetViewsFactory implements RemoteViewsService.RemoteViewsFactory
     private List<Word> wordsList = new ArrayList<>(DatabaseHandler.NUM_OF_WORDS);
     private Context context;
     private DatabaseHandler db;
-    private int appWidgetId;
 
     public WidgetViewsFactory(Context context, Intent intent) {
         this.context = context;
         db = DatabaseHandler.getInstance(context);
-        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
     }
 
     @Override
