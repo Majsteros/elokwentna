@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
 
@@ -108,6 +109,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     *
+     * @param isDisplayed The value of column  {@link #KEY_WORDS_DISPLAYED} in table {@link #TABLE_WORDS}
+     *                    that contains value 1 (<b>true</b>) or 0 (<b>false</b>).
+     * @return Number of records.
+     */
     public int countWordsByWasDisplayed(boolean isDisplayed) {
         int binaryBoolean = isDisplayed ? 1 : 0;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -153,7 +160,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns random words where value was_displayed is set to 0
+     * @return Random words where value was_displayed is set to 0.
      */
     public List<Integer> randomWords() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -231,9 +238,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns words where IDs as array is set in Config table
-     * @param ids array of IDs separated by comma
-     * @return map {@link Map} where key is word, value is description
+     * Returns words where IDs as array is set in Config table.
+     * @param ids array of IDs separated by comma.
+     * @return {@link Map} where key is word, value is description.
      */
     public Map<String, String> getWords(String ids) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -248,10 +255,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return map;
     }
 
-    public Map<String, String> getWordsBy(String column) {
+    /**
+     * @param column The column which value equals 1.
+     * @return {@link TreeMap} sorted by key value.
+     */
+    public TreeMap<String, String> getWordsBy(String column) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Map<String, String> map = new HashMap<>();
-        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ column +"` = 1", null);
+        TreeMap<String, String> map = new TreeMap<>();
+        Cursor cursor = db.rawQuery("SELECT `"+ KEY_WORDS_WORD +"`,`"+ KEY_WORDS_DESCRIPTION +"` FROM `"+ TABLE_WORDS +"` WHERE `"+ column +"` = 1 ORDER BY `"+ KEY_WORDS_WORD +"` ASC", null);
         if (cursor.getCount() == 0)
             Log.d(TAG, "getWordsBy returned zero results!");
         while (cursor.moveToNext())

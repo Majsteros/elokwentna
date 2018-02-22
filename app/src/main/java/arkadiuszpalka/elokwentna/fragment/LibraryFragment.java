@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
 
 import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.adapter.LibraryRecyclerViewAdapter;
@@ -25,10 +25,10 @@ public class LibraryFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = getActivity();
+        this.context = getActivity(); //TODO sprawdź czy się obejdzie
         DatabaseHandler db = DatabaseHandler.getInstance(context);
         wordsList = new ArrayList<>();
-        Map<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_DISPLAYED);
+        TreeMap<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_DISPLAYED);
         for (String key : map.keySet())
             wordsList.add(new Word(key, map.get(key)));
     }

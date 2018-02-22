@@ -1,8 +1,8 @@
 package arkadiuszpalka.elokwentna.adapter;
 
 import android.animation.Animator;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +23,6 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
 
         LibraryWordViewHolder(View itemView) {
             super(itemView);
-            CardView cardView = (CardView)itemView.findViewById(R.id.library_card_view);
             wordWord = (TextView)itemView.findViewById(R.id.word_title);
             wordDescription = (TextView)itemView.findViewById(R.id.word_description);
             arrowView = itemView.findViewById(R.id.arrow_down);
@@ -40,6 +39,8 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
             if (!isViewExpanded) {
                 isViewExpanded = true;
                 arrowView.animate().rotation(180).setDuration(200).start();
+                Log.d("ANIMACJE", "Desc opened before\nposY:" + wordDescription.getHeight());
+                wordDescription.setY(-wordDescription.getHeight());
                 wordDescription.animate()
                         .translationY(0)
                         .setDuration(200)
@@ -47,13 +48,13 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
                         .setListener(new Animator.AnimatorListener() {
                             @Override
                             public void onAnimationStart(Animator animation) {
-
+                                wordDescription.setVisibility(View.VISIBLE);
                             }
 
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                wordDescription.setVisibility(View.VISIBLE);
                                 wordDescription.setEnabled(true);
+                                Log.d("ANIMACJE", "Desc opened after\nposY:" + wordDescription.getHeight());
                             }
 
                             @Override
@@ -69,6 +70,7 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
             } else {
                 isViewExpanded = false;
                 arrowView.animate().rotation(0).setDuration(200).start();
+                Log.d("ANIMACJE", "Desc closed before\nposY:" + wordDescription.getHeight());
                 wordDescription.animate()
                         .translationY(-wordDescription.getHeight())
                         .setDuration(200)
@@ -83,6 +85,7 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
                             public void onAnimationEnd(Animator animation) {
                                 wordDescription.setVisibility(View.GONE);
                                 wordDescription.setEnabled(false);
+                                Log.d("ANIMACJE", "Desc closed after\nposY:" + wordDescription.getHeight());
                             }
 
                             @Override

@@ -1,6 +1,5 @@
 package arkadiuszpalka.elokwentna.widget;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
@@ -18,11 +17,12 @@ public class WidgetViewsFactory implements RemoteViewsService.RemoteViewsFactory
     private List<Word> wordsList = new ArrayList<>(DatabaseHandler.NUM_OF_WORDS);
     private Context context;
     private DatabaseHandler db;
+    private int color;
 
-    public WidgetViewsFactory(Context context, Intent intent) {
+    WidgetViewsFactory(Context context, Intent intent) {
         this.context = context;
         db = DatabaseHandler.getInstance(context);
-        int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        this.color = intent.getIntExtra(WidgetProvider.EXTRA_COLOR, R.color.primaryColor);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class WidgetViewsFactory implements RemoteViewsService.RemoteViewsFactory
         RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.widget_item);
         remoteView.setTextViewText(R.id.word_title, wordsList.get(position).getWord());
         remoteView.setTextViewText(R.id.word_description, wordsList.get(position).getDescription());
-
+        remoteView.setInt(R.id.widget_item, "setBackgroundResource", color);
         return remoteView;
     }
 

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.TreeMap;
 
 import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.adapter.LibraryRecyclerViewAdapter;
@@ -28,7 +28,7 @@ public class FavoritesFragment extends Fragment {
         this.context = getActivity();
         DatabaseHandler db = DatabaseHandler.getInstance(context);
         wordsList = new ArrayList<>();
-        Map<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_FAVORITE);
+        TreeMap<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_FAVORITE);
         for (String key : map.keySet())
             wordsList.add(new Word(key, map.get(key)));
     }
