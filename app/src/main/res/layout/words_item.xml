@@ -6,13 +6,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="12dp"
-    card_view:cardElevation="6dp">
+    android:layout_margin="@dimen/card_margin"
+    card_view:cardElevation="@dimen/card_elevation">
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="@dimen/card_padding"
+            android:layout_marginBottom="@dimen/card_extended_padding"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:weightSum="1">
@@ -27,11 +27,11 @@
                 android:textColor="#303030" />
 
             <View
-                android:layout_width="236dp"
-                android:layout_height="1dp"
+                android:layout_width="@dimen/line_width"
+                android:layout_height="@dimen/line_gradient"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="6dp"
+                android:layout_marginBottom="@dimen/card_padding"
+                android:layout_marginTop="@dimen/card_padding"
                 android:background="@drawable/line_grad" />
 
             <TextView
@@ -39,8 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginRight="12dp"
-                android:layout_marginLeft="12dp"
+                android:layout_marginRight="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
                 android:text="@string/description_default"
                 android:textColor="#303030"
                 android:textAlignment="center"/>

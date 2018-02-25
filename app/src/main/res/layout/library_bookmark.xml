@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginBottom="1dp">
+    android:layout_marginBottom="@dimen/item_list_margin">
 
     <TextView
         android:id="@+id/bookmark_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginTop="@dimen/card_bookmark_padding"
+        android:layout_marginBottom="@dimen/card_bookmark_padding"
+        android:layout_marginStart="@dimen/card_extended_padding"
         android:text="@string/word_default"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/primaryLightColor" />

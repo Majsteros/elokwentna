@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_item"
     android:orientation="vertical"
-    android:layout_marginTop="6dp"
-    android:layout_marginBottom="12dp"
+    android:layout_marginTop="@dimen/card_padding"
+    android:layout_marginBottom="@dimen/card_margin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:weightSum="1">
@@ -22,8 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginLeft="@dimen/card_extended_padding"
+        android:layout_marginRight="@dimen/card_extended_padding"
         android:text="@string/description_default"
         android:textAlignment="center"
         android:textColor="@color/primaryTextColor" />

@@ -4,7 +4,6 @@
     <string name="timer_done">Done</string>
     <string name="button_sync">Sync Data</string>
     <string name="button_help">Help</string>
-    <string name="button_about">About me</string>
     <string name="download_words">You must update the database! Select Sync Data from top menu.</string>
     <string name="download_message">Downloading words…</string>
     <string name="no_more_results">No words. Try to update your database. Select Sync Data from top menu.</string>
@@ -25,4 +24,15 @@
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="description_default">Update the database using an option Sync Data from upper menu.</string>
+    <string name="settings_widget_color">Change color of widget</string>
+    <string name="settings_button_choose">Choose</string>
+    <string name="debug_test">Lorem ipsum dolor sit amet ante. Pellentesque nibh ac nisl. Nam eget sapien a nunc. Praesent sit amet, est. Suspendisse turpis egestas. Praesent nec magna fringilla massa placerat porttitor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per conubia nostra, per conubia nostra, per conubia nostra, per inceptos hymenaeos. Fusce venenatis in, elementum nulla. Cras in nulla nec.</string>
+    <string name="settings_drop_database">Drop the database</string>
+    <string name="settings_button_clear">Clear</string>
+    <string name="settings_drop_database_info">Użycie tej funkcji spowoduje permamentne wyczyszcenie Twojej lokalnej bazy słów, a następnie pobrane danych z serwera. Nowe dane zostaną zapisane w Twojej lokanej bazie.</string>
+    <string name="settings_widget_color_info">Zmień kolor swojego widgetu na ekranie głównym.</string>
+    <string name="settings_about_me">About me</string>
+    <string name="application_version">Application version:</string>
+    <string name="author_name">Arkadiusz Pałka</string>
+    <string name="author">Author:</string>
 </resources>

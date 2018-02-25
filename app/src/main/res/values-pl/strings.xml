@@ -5,7 +5,6 @@
     <string name="timer_text">Czas do następnej aktualizacji słów:</string>
     <string name="button_sync">Synchronizuj dane</string>
     <string name="button_help">Pomoc</string>
-    <string name="button_about">O mnie</string>
     <string name="download_words">Musisz zaktualizować bazę danych! Wybierz Synchronizuj dane z górnego menu.</string>
     <string name="download_message">Pobieranie słów…</string>
     <string name="no_more_results">Brak wyników</string>
@@ -26,4 +25,14 @@
     <string name="dialog_yes">Tak</string>
     <string name="dialog_no">Nie</string>
     <string name="t_refusalUpdate">Nie możesz jeszcze wylosować słów</string>
+    <string name="settings_widget_color">Kolor widgetu</string>
+    <string name="settings_button_choose">Wybierz</string>
+    <string name="settings_drop_database">Wyczyść bazę danych</string>
+    <string name="settings_button_clear">Wyczyść</string>
+    <string name="settings_drop_database_info">Użycie tej funkcji spowoduje permamentne wyczyszcenie Twojej lokalnej bazy słów, a następnie pobrane danych z serwera. Nowe dane zostaną zapisane w Twojej lokanej bazie.</string>
+    <string name="settings_widget_color_info">Zmień kolor swojego widgetu na ekranie głównym.</string>
+    <string name="settings_about_me">O mnie</string>
+    <string name="application_version">Wersja aplikacji:</string>
+    <string name="author_name">Arkadiusz Pałka</string>
+    <string name="author">Autor:</string>
 </resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_elevation">6dp</dimen>
+    <dimen name="card_corner_radius">6dp</dimen>
+    <dimen name="card_margin">12dp</dimen>
+    <dimen name="card_padding">6dp</dimen>
+    <dimen name="card_extended_padding">12dp</dimen>
+    <dimen name="card_bookmark_padding">2dp</dimen>
+    <dimen name="item_list_margin">1dp</dimen>
+    <dimen name="spacing">2dp</dimen>
+    <dimen name="line_gradient">1dp</dimen>
+    <dimen name="line_width">263dp</dimen>
+</resources>
