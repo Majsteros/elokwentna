@@ -21,14 +21,13 @@ import arkadiuszpalka.elokwentna.words.Word;
 
 public class FavoritesFragment extends Fragment {
     private Context context;
-    private List<Object> wordsList;
+    private List<Object> wordsList = new ArrayList<>();
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = getActivity();
         DatabaseHandler db = DatabaseHandler.getInstance(context);
-        wordsList = new ArrayList<>();
         TreeMap<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_FAVORITE);
         for (String key : map.keySet()) {
             char currentLetter = key.charAt(0);
