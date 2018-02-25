@@ -174,6 +174,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return ids;
     }
 
+    /**
+     * @param ids {@link List of ids to }
+     */
     public void setWordsDisplayed(List<Integer> ids) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();

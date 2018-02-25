@@ -93,8 +93,7 @@ public class WordsFragment extends Fragment {
 
     public void setDrawnWords() {
         Map<String, String> map = db.getWords(
-                db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS)
-        );
+                db.getConfig(DatabaseHandler.KEY_CONFIG_SAVED_IDS));
         if (wordsList.size() > 0)
             wordsList.clear();
         for (String key : map.keySet()) {

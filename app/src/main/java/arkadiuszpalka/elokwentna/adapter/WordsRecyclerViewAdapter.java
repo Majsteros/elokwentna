@@ -3,7 +3,6 @@ package arkadiuszpalka.elokwentna.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,10 +22,10 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecycler
 
     static class WordViewHolder extends RecyclerView.ViewHolder {
         TextView wordDescription, wordWord;
+        boolean enableAdd = true;
 
         WordViewHolder(final View itemView) {
             super(itemView);
-            CardView cardView = (CardView)itemView.findViewById(R.id.word_card_view);
             wordWord = (TextView)itemView.findViewById(R.id.word_title);
             wordDescription = (TextView)itemView.findViewById(R.id.word_description);
 

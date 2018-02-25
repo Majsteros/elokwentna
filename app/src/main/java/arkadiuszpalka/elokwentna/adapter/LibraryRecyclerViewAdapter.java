@@ -11,14 +11,28 @@ import android.widget.TextView;
 import java.util.List;
 
 import arkadiuszpalka.elokwentna.R;
+import arkadiuszpalka.elokwentna.words.Bookmark;
 import arkadiuszpalka.elokwentna.words.Word;
 
-public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecyclerViewAdapter.LibraryWordViewHolder> {
-    private List<Word> wordsList;
+public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private List<Object> wordsList;
+    private static final int WORD_CARD_VIEW = 0;
+    private static final int BOOKMARK_VIEW = 1;
+
+    static class BookmarkViewHolder extends RecyclerView.ViewHolder {
+        TextView bookmarkLetter;
+
+        BookmarkViewHolder(View itemView) {
+            super(itemView);
+            bookmarkLetter = (TextView)itemView.findViewById(R.id.bookmark_title);
+        }
+
+    }
 
     static class LibraryWordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView wordDescription, wordWord;
         View arrowView;
+
         private boolean isViewExpanded = false;
 
         LibraryWordViewHolder(View itemView) {
@@ -33,13 +47,11 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
                 wordDescription.setEnabled(false);
             }
         }
-
         @Override
         public void onClick(View v) {
             if (!isViewExpanded) {
                 isViewExpanded = true;
                 arrowView.animate().rotation(180).setDuration(200).start();
-                Log.d("ANIMACJE", "Desc opened before\nposY:" + wordDescription.getHeight());
                 wordDescription.setY(-wordDescription.getHeight());
                 wordDescription.animate()
                         .translationY(0)
@@ -54,7 +66,6 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 wordDescription.setEnabled(true);
-                                Log.d("ANIMACJE", "Desc opened after\nposY:" + wordDescription.getHeight());
                             }
 
                             @Override
@@ -70,7 +81,6 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
             } else {
                 isViewExpanded = false;
                 arrowView.animate().rotation(0).setDuration(200).start();
-                Log.d("ANIMACJE", "Desc closed before\nposY:" + wordDescription.getHeight());
                 wordDescription.animate()
                         .translationY(-wordDescription.getHeight())
                         .setDuration(200)
@@ -85,7 +95,6 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
                             public void onAnimationEnd(Animator animation) {
                                 wordDescription.setVisibility(View.GONE);
                                 wordDescription.setEnabled(false);
-                                Log.d("ANIMACJE", "Desc closed after\nposY:" + wordDescription.getHeight());
                             }
 
                             @Override
@@ -100,22 +109,68 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<LibraryRecy
                         }).start();
             }
         }
+
     }
 
-    public LibraryRecyclerViewAdapter(List<Word> wordsList) {
+    public LibraryRecyclerViewAdapter(List<Object> wordsList) {
         this.wordsList = wordsList;
     }
 
     @Override
-    public LibraryWordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.library_item, parent, false);
-        return new LibraryWordViewHolder(view);
+    public int getItemViewType(int position) {
+        Log.d("RECYCLER", ">>> getItemViewType(position = "+ position +") | ");
+        if (wordsList.get(position).getClass() == Bookmark.class) {
+            return BOOKMARK_VIEW;
+        } else {
+            return WORD_CARD_VIEW;
+        }
     }
 
     @Override
-    public void onBindViewHolder(LibraryWordViewHolder holder, int position) {
-        holder.wordWord.setText(wordsList.get(position).getWord());
-        holder.wordDescription.setText(wordsList.get(position).getDescription());
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d("RECYCLER", ">>> onCreateViewHolder");
+        int layoutResourceId = 0;
+        switch (viewType) {
+            case WORD_CARD_VIEW:
+                layoutResourceId = R.layout.library_item;
+                break;
+            case BOOKMARK_VIEW:
+                layoutResourceId = R.layout.library_bookmark;
+                break;
+        }
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutResourceId, parent, false);
+
+        switch (viewType) {
+            case WORD_CARD_VIEW:
+                return new LibraryWordViewHolder(view);
+            case BOOKMARK_VIEW:
+                return new BookmarkViewHolder(view);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        Log.d("RECYCLER", ">>> onBindViewHolder");
+        if (holder == null) {
+            Log.i(getClass().getName(), "holder is null!");
+            return;
+        }
+        switch (holder.getItemViewType()) {
+            case WORD_CARD_VIEW:
+                Word word = (Word)wordsList.get(position);
+                LibraryWordViewHolder libraryWordViewHolder = (LibraryWordViewHolder) holder;
+                libraryWordViewHolder.wordWord.setText(word.getWord());
+                libraryWordViewHolder.wordDescription.setText(word.getDescription());
+                break;
+            case BOOKMARK_VIEW:
+                Bookmark bookmark = (Bookmark)wordsList.get(position);
+                BookmarkViewHolder bookmarkViewHolder = (BookmarkViewHolder) holder;
+                bookmarkViewHolder.bookmarkLetter.setText(String.valueOf(bookmark.getLetter()));
+                break;
+        }
     }
 
     @Override

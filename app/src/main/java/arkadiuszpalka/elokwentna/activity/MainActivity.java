@@ -39,12 +39,19 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private Context context;
     protected DatabaseHandler db;
+
     private static final String ARG_SELECTED_ITEM = "arg_selected_item";
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
+
     private static final String WORDS_FRAGMENT_TAG = "words";
     private static final String FAVORITES_FRAGMENT_TAG = "favorites";
     private static final String LIBRARY_FRAGMENT_TAG = "library";
     private static final String SETTINGS_FRAGMENT_TAG = "settings";
+    private static final int WORDS_FRAGMENT_ID = 0;
+    private static final int FAVORITES_FRAGMENT_ID = 1;
+    private static final int LIBRARY_FRAGMENT_ID = 2;
+    private static final int SETTINGS_FRAGMENT_ID = 3;
+
     private static final String TAG = MainActivity.class.getName();
 
     @Override
@@ -61,16 +68,16 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.bottombaritem_words:
-                            changeFragment(0);
+                            changeFragment(WORDS_FRAGMENT_ID);
                             return true;
                         case R.id.bottombaritem_favorites:
-                            changeFragment(1);
+                            changeFragment(FAVORITES_FRAGMENT_ID);
                             return true;
                         case R.id.bottombaritem_library:
-                            changeFragment(2);
+                            changeFragment(LIBRARY_FRAGMENT_ID);
                             return true;
                         case R.id.bottombaritem_settings:
-                            changeFragment(3);
+                            changeFragment(SETTINGS_FRAGMENT_ID);
                             return true;
                     }
                     return false;
@@ -78,30 +85,30 @@ public class MainActivity extends AppCompatActivity {
             });
 
         if (savedInstanceState == null)
-            changeFragment(0);
+            changeFragment(WORDS_FRAGMENT_ID);
         else
             changeFragment(savedInstanceState.getInt(ARG_SELECTED_ITEM));
     }
 
 
 
-    private void changeFragment(int position) {
+    void changeFragment(int position) {
         Fragment fragment = null;
         String fragmentTAG = null;
         switch (position) {
-            case 0:
+            case WORDS_FRAGMENT_ID:
                 fragment = new WordsFragment();
                 fragmentTAG = WORDS_FRAGMENT_TAG;
                 break;
-            case 1:
+            case FAVORITES_FRAGMENT_ID:
                 fragment = new FavoritesFragment();
                 fragmentTAG = FAVORITES_FRAGMENT_TAG;
                 break;
-            case 2:
+            case LIBRARY_FRAGMENT_ID:
                 fragment = new LibraryFragment();
                 fragmentTAG = LIBRARY_FRAGMENT_TAG;
                 break;
-            case 3:
+            case SETTINGS_FRAGMENT_ID:
                 fragment = new SettingsFragment();
                 fragmentTAG = SETTINGS_FRAGMENT_TAG;
                 break;

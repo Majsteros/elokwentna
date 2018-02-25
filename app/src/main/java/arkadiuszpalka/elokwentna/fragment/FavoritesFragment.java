@@ -16,11 +16,12 @@ import java.util.TreeMap;
 import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.adapter.LibraryRecyclerViewAdapter;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
+import arkadiuszpalka.elokwentna.words.Bookmark;
 import arkadiuszpalka.elokwentna.words.Word;
 
 public class FavoritesFragment extends Fragment {
     private Context context;
-    private List<Word> wordsList;
+    private List<Object> wordsList;
 
     @Override
     public void onAttach(Context context) {
@@ -29,8 +30,22 @@ public class FavoritesFragment extends Fragment {
         DatabaseHandler db = DatabaseHandler.getInstance(context);
         wordsList = new ArrayList<>();
         TreeMap<String, String> map = db.getWordsBy(DatabaseHandler.KEY_WORDS_FAVORITE);
-        for (String key : map.keySet())
-            wordsList.add(new Word(key, map.get(key)));
+        for (String key : map.keySet()) {
+            char currentLetter = key.charAt(0);
+            if (map.lowerKey(key) == null)
+                wordsList.add(new Bookmark(currentLetter));
+            if (map.higherKey(key) != null) {
+                char nextLetter = map.higherKey(key).charAt(0);
+                if (currentLetter != nextLetter) {
+                    wordsList.add(new Word(key, map.get(key)));
+                    wordsList.add(new Bookmark(nextLetter));
+                } else {
+                    wordsList.add(new Word(key, map.get(key)));
+                }
+            } else {
+                wordsList.add(new Word(key, map.get(key)));
+            }
+        }
     }
 
     @Override
