@@ -10,4 +10,6 @@
     <dimen name="spacing">2dp</dimen>
     <dimen name="line_gradient">1dp</dimen>
     <dimen name="line_width">263dp</dimen>
+    <dimen name="space_between_elements">24dp</dimen>
+    <dimen name="thumb_size">16dp</dimen>
 </resources>

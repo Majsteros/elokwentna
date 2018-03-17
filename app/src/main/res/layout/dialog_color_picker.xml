@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/view_color"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="#000"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/red"
+        android:textColor="#FF0000"
+        android:layout_marginTop="@dimen/space_between_elements"
+        android:layout_marginStart="@dimen/card_padding"/>
+
+    <SeekBar
+        android:id="@+id/seekbar_red"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Green"
+        android:textColor="#00FF00"
+        android:layout_marginTop="@dimen/space_between_elements"
+        android:layout_marginStart="@dimen/card_padding"/>
+
+    <SeekBar
+        android:id="@+id/seekbar_green"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Blue"
+        android:textColor="#0000FF"
+        android:layout_marginTop="@dimen/space_between_elements"
+        android:layout_marginStart="@dimen/card_padding"/>
+
+    <SeekBar
+        android:id="@+id/seekbar_blue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/card_padding">
+
+        <Button
+            android:id="@+id/button_proceed"
+            android:text="@string/settings_button_choose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/card_padding"/>
+
+        <Button
+            android:id="@+id/button_dismiss"
+            android:text="@android:string/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/button_proceed"
+            android:layout_marginEnd="@dimen/card_padding"/>
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

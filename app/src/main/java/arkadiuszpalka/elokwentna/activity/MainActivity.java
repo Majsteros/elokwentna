@@ -90,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
             changeFragment(savedInstanceState.getInt(ARG_SELECTED_ITEM));
     }
 
-
-
     void changeFragment(int position) {
         Fragment fragment = null;
         String fragmentTAG = null;
@@ -160,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Downloads in new thread words then inserts them to database.
      */
-    private static class DownloadWordsTask extends AsyncTask<Void, Void, String> {
+    public static class DownloadWordsTask extends AsyncTask<Void, Void, String> {
         Context context;
         ProgressBar progressBar;
         DatabaseHandler db;

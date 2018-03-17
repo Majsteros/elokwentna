@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
-
-    private Context context;
     private static DatabaseHandler instance;
 
     private static final String DATABASE_NAME = "elokwentna";
@@ -34,8 +32,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
 
     //Tables names
-    public static final String TABLE_WORDS = "words";
-    public static final String TABLE_CONFIG  = "config";
+    private static final String TABLE_WORDS = "words";
+    private static final String TABLE_CONFIG  = "config";
     private static final String[] ALL_TABLES = {TABLE_CONFIG, TABLE_WORDS};
 
     //Words table columns names
@@ -54,7 +52,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
     }
 
     public static DatabaseHandler getInstance(Context context) {
@@ -273,26 +270,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return map;
-    }
-
-    //For debug only
-    public String getTableAsString(String tableName) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String tableString = String.format("Table %s:\n", tableName);
-        Cursor allRows  = db.rawQuery("SELECT * FROM " + tableName, null);
-        if (allRows.moveToFirst() ){
-            String[] columnNames = allRows.getColumnNames();
-            do {
-                for (String name: columnNames) {
-                    tableString += String.format("%s: %s\n", name,
-                            allRows.getString(allRows.getColumnIndex(name)));
-                }
-                tableString += "\n";
-
-            } while (allRows.moveToNext());
-        }
-        allRows.close();
-        return tableString;
     }
 
     public String convertArrayToString(List<Integer> array) {

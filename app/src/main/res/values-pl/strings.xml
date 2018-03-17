@@ -35,4 +35,9 @@
     <string name="application_version">Wersja aplikacji:</string>
     <string name="author_name">Arkadiusz Pałka</string>
     <string name="author">Autor:</string>
+    <string name="red">Czerwony</string>
+    <string name="Green">Zielony</string>
+    <string name="Blue">Niebieski</string>
+    <string name="question_drop_database">Wymazać bazę danych?</string>
+    <string name="desc_drop_database">Stracisz całą bibliotekę słów, ulubione oraz lokalną bazę słów!</string>
 </resources>
