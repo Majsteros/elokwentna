@@ -16,19 +16,34 @@ import arkadiuszpalka.elokwentna.R;
 import arkadiuszpalka.elokwentna.handler.DatabaseHandler;
 import arkadiuszpalka.elokwentna.words.Word;
 
-public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecyclerViewAdapter.WordViewHolder> {
+public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Word> wordsList;
     private static final String TAG = WordsRecyclerViewAdapter.class.getName();
+    private static final int DUMMY_VIEW = 0;
+    private static final int WORD_VIEW = 1;
 
-    static class WordViewHolder extends RecyclerView.ViewHolder {
-        TextView wordDescription, wordWord;
-        boolean enableAdd = true;
+    static class DummyViewHolder extends RecyclerView.ViewHolder  {
+        private TextView wordDescription, wordWord;
 
-        WordViewHolder(final View itemView) {
+        TextView getViewDescription() {
+            return wordDescription;
+        }
+
+        TextView getViewWord() {
+            return wordWord;
+        }
+
+        DummyViewHolder(View itemView) {
             super(itemView);
             wordWord = (TextView)itemView.findViewById(R.id.word_title);
             wordDescription = (TextView)itemView.findViewById(R.id.word_description);
+        }
+    }
 
+    static class WordViewHolder extends DummyViewHolder {
+
+        WordViewHolder(final View itemView) {
+            super(itemView);
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -40,7 +55,7 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecycler
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             DatabaseHandler db = DatabaseHandler.getInstance(itemView.getContext());
-                                            db.setWordsFavorite(wordWord.getText().toString());
+                                            db.setWordsFavorite(getViewWord().getText().toString());
                                             dialog.dismiss();
                                         }
                                     }).setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
@@ -54,6 +69,7 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecycler
                 }
             });
         }
+
     }
 
     public WordsRecyclerViewAdapter(List<Word> wordsList) {
@@ -71,15 +87,41 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<WordsRecycler
     }
 
     @Override
-    public WordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.words_item, parent, false);
-        return new WordViewHolder(view);
+        switch (viewType) {
+            case WORD_VIEW:
+                return new WordViewHolder(view);
+            case DUMMY_VIEW:
+                return new DummyViewHolder(view);
+            default:
+                return null;
+        }
     }
 
     @Override
-    public void onBindViewHolder(WordViewHolder holder, int position) {
-        holder.wordWord.setText(wordsList.get(position).getWord());
-        holder.wordDescription.setText(wordsList.get(position).getDescription());
+    public int getItemViewType(int position) {
+        if (wordsList.get(position).isAddable()) {
+            return WORD_VIEW;
+        } else {
+            return DUMMY_VIEW;
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        switch (getItemViewType(position)) {
+            case WORD_VIEW:
+                WordViewHolder wordViewHolder = (WordViewHolder) holder;
+                wordViewHolder.getViewWord().setText(wordsList.get(position).getWord());
+                wordViewHolder.getViewDescription().setText(wordsList.get(position).getDescription());
+                break;
+            case DUMMY_VIEW:
+                DummyViewHolder dummyViewHolder = (DummyViewHolder) holder;
+                dummyViewHolder.getViewWord().setText(wordsList.get(position).getWord());
+                dummyViewHolder.getViewDescription().setText(wordsList.get(position).getDescription());
+                break;
+        }
     }
 
     @Override

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int FAVORITES_FRAGMENT_ID = 1;
     private static final int LIBRARY_FRAGMENT_ID = 2;
     private static final int SETTINGS_FRAGMENT_ID = 3;
-
-    private static final String TAG = MainActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
                 request = jsonObj.put(DatabaseHandler.KEY_CONFIG_LAST_UPDATED, db.getConfig(DatabaseHandler.KEY_CONFIG_LAST_UPDATED)).toString();
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.d(TAG, "Error when tried encode JSON object");
             } finally {
                 if(request == null || request.isEmpty())
                     cancel(true);
@@ -195,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
                 return httpHandler.executePOST(URL_GET_WORDS, request);
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d(TAG, "Error when tried execute POST method");
                 cancel(true);
             }
             return null;
@@ -203,7 +198,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d(TAG, "Response = " + result);
             if (!(result.equals("false"))) {
                 try {
                     JSONArray jsonArray = new JSONArray(result);
@@ -224,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment.updateRecyclerViewData();
                     }
                 } catch (JSONException e) {
-                    Log.d(TAG, "Error when tried encode JSON object");
+                    e.printStackTrace();
                 } finally {
                     Toast.makeText(context, context.getString(R.string.t_afterDownload), Toast.LENGTH_SHORT).show();
                     progressBar.setVisibility(View.GONE);

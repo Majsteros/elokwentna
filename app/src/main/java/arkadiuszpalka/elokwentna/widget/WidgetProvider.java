@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import arkadiuszpalka.elokwentna.R;
@@ -15,14 +14,12 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class WidgetProvider extends AppWidgetProvider {
     public static final String EXTRA_COLOR = "color";
-    public static final String TAG = "WIDGET_PROVIDER";
     public static final String PREF_NAME = "arkadiuszpalka.elokwentna.widget.WidgetProvider";
     public static final String PREF_PREFIX_KEY = "prefix_";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
-            Log.d("WIDGET_PROVIDER", "onUpdate\n");
             Intent intent = new Intent(context, WidgetService.class);
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
             intent.putExtra(EXTRA_COLOR, loadColorPref(context, appWidgetId));

@@ -128,7 +128,6 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d("RECYCLER", ">>> onCreateViewHolder");
         int layoutResourceId = 0;
         switch (viewType) {
             case WORD_CARD_VIEW:
@@ -153,11 +152,8 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Log.d("RECYCLER", ">>> onBindViewHolder");
-        if (holder == null) {
-            Log.i(getClass().getName(), "holder is null!");
+        if (holder == null)
             return;
-        }
         switch (holder.getItemViewType()) {
             case WORD_CARD_VIEW:
                 Word word = (Word)wordsList.get(position);

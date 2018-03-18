@@ -26,7 +26,6 @@
     <string name="description_default">Update the database using an option Sync Data from upper menu.</string>
     <string name="settings_widget_color">Change color of widget</string>
     <string name="settings_button_choose">Choose</string>
-    <string name="debug_test">Lorem ipsum dolor sit amet ante. Pellentesque nibh ac nisl. Nam eget sapien a nunc. Praesent sit amet, est. Suspendisse turpis egestas. Praesent nec magna fringilla massa placerat porttitor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per conubia nostra, per conubia nostra, per conubia nostra, per inceptos hymenaeos. Fusce venenatis in, elementum nulla. Cras in nulla nec.</string>
     <string name="settings_drop_database">Drop the database</string>
     <string name="settings_button_clear">Earse</string>
     <string name="settings_drop_database_info">Użycie tej funkcji spowoduje permamentne wyczyszcenie Twojej lokalnej bazy słów, a następnie pobrane danych z serwera. Nowe dane zostaną zapisane w Twojej lokanej bazie.</string>

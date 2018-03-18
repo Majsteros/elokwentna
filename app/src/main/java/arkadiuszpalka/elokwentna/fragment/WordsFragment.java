@@ -51,7 +51,7 @@ public class WordsFragment extends Fragment {
             setDrawnWords();
         } else {
             Toast.makeText(context, getString(R.string.download_words), Toast.LENGTH_LONG).show();
-            wordsList.add(new Word(getString(R.string.word_default), getString(R.string.description_default)));
+            wordsList.add(new Word(getString(R.string.word_default), getString(R.string.description_default), false));
         }
     }
 
