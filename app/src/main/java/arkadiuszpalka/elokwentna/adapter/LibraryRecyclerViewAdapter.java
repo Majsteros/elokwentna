@@ -20,25 +20,25 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     private static final int BOOKMARK_VIEW = 1;
 
     static class BookmarkViewHolder extends RecyclerView.ViewHolder {
-        TextView bookmarkLetter;
+        final TextView bookmarkLetter;
 
         BookmarkViewHolder(View itemView) {
             super(itemView);
-            bookmarkLetter = (TextView)itemView.findViewById(R.id.bookmark_title);
+            bookmarkLetter = itemView.findViewById(R.id.bookmark_title);
         }
 
     }
 
     static class LibraryWordViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView wordDescription, wordWord;
-        View arrowView;
+        final TextView wordDescription, wordWord;
+        final View arrowView;
 
         private boolean isViewExpanded = false;
 
         LibraryWordViewHolder(View itemView) {
             super(itemView);
-            wordWord = (TextView)itemView.findViewById(R.id.word_title);
-            wordDescription = (TextView)itemView.findViewById(R.id.word_description);
+            wordWord = itemView.findViewById(R.id.word_title);
+            wordDescription = itemView.findViewById(R.id.word_description);
             arrowView = itemView.findViewById(R.id.arrow_down);
 
             itemView.setOnClickListener(this);

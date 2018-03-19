@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private BottomNavigationView bottomNavigationView;
     private Context context;
-    protected DatabaseHandler db;
+    private DatabaseHandler db;
 
     private static final String ARG_SELECTED_ITEM = "arg_selected_item";
     private static final String URL_GET_WORDS = "http://elokwentna.cba.pl/api/get_word.php";
@@ -57,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         this.context = getApplicationContext();
         db = DatabaseHandler.getInstance(context);
-        progressBar = (ProgressBar)findViewById(R.id.indeterminate_bar);
-        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_nav);
+        progressBar = findViewById(R.id.indeterminate_bar);
+        bottomNavigationView = findViewById(R.id.bottom_nav);
         bottomNavigationView.setOnNavigationItemSelectedListener(
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             changeFragment(savedInstanceState.getInt(ARG_SELECTED_ITEM));
     }
 
-    void changeFragment(int position) {
+    private void changeFragment(int position) {
         Fragment fragment = null;
         String fragmentTAG = null;
         switch (position) {
@@ -156,13 +156,13 @@ public class MainActivity extends AppCompatActivity {
      * Downloads in new thread words then inserts them to database.
      */
     public static class DownloadWordsTask extends AsyncTask<Void, Void, String> {
-        Context context;
-        ProgressBar progressBar;
-        DatabaseHandler db;
-        FragmentManager fragmentManager;
+        final Context context;
+        final ProgressBar progressBar;
+        final DatabaseHandler db;
+        final FragmentManager fragmentManager;
         String request;
         JSONObject jsonObj;
-        HttpHandler httpHandler = new HttpHandler();
+        final HttpHandler httpHandler = new HttpHandler();
 
         /** Prepares request to database.
          * @param context Application context

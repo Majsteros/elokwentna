@@ -35,8 +35,8 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
 
         DummyViewHolder(View itemView) {
             super(itemView);
-            wordWord = (TextView)itemView.findViewById(R.id.word_title);
-            wordDescription = (TextView)itemView.findViewById(R.id.word_description);
+            wordWord = itemView.findViewById(R.id.word_title);
+            wordDescription = itemView.findViewById(R.id.word_description);
         }
     }
 
@@ -55,7 +55,7 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             DatabaseHandler db = DatabaseHandler.getInstance(itemView.getContext());
-                                            db.setWordsFavorite(getViewWord().getText().toString());
+                                            db.setWordFavorite(getViewWord().getText().toString());
                                             dialog.dismiss();
                                         }
                                     }).setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
@@ -69,7 +69,6 @@ public class WordsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.
                 }
             });
         }
-
     }
 
     public WordsRecyclerViewAdapter(List<Word> wordsList) {

@@ -1,8 +1,8 @@
 package arkadiuszpalka.elokwentna.words;
 
 public class Word {
-    private String word;
-    private String description;
+    private final String word;
+    private final String description;
     private boolean addable = true;
 
     public Word(String word, String description) {

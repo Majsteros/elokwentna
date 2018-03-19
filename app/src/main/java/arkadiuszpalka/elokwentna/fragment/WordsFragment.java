@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ import arkadiuszpalka.elokwentna.widget.WidgetProvider;
 import arkadiuszpalka.elokwentna.words.Word;
 
 public class WordsFragment extends Fragment {
-    private static final String TAG = WordsFragment.class.getName();
 
     private CountDownTimer countDownTimer;
     private TextView timer;
@@ -59,7 +57,6 @@ public class WordsFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (countDownTimer != null) {
-            Log.d(TAG, "\nTimer was destroyed!");
             countDownTimer.cancel();
         }
     }
@@ -67,14 +64,14 @@ public class WordsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState) {
         View myInflatedView = inflater.inflate(R.layout.fragment_words, container, false);
-        RecyclerView recyclerView = (RecyclerView) myInflatedView.findViewById(R.id.words_recycler_view);
+        RecyclerView recyclerView = myInflatedView.findViewById(R.id.words_recycler_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);
         wordsRecyclerViewAdapter = new WordsRecyclerViewAdapter(wordsList);
         recyclerView.setAdapter(wordsRecyclerViewAdapter);
 
-        timer = (TextView) myInflatedView.findViewById(R.id.timer_field);
+        timer = myInflatedView.findViewById(R.id.timer_field);
 
         return myInflatedView;
     }
@@ -83,7 +80,7 @@ public class WordsFragment extends Fragment {
         wordsRecyclerViewAdapter.swapWordsList(wordsList);
     }
 
-    public void updateWidgetData() {
+    private void updateWidgetData() {
         int [] appWidgetIds = AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(
                         new ComponentName(context, WidgetProvider.class)
@@ -97,13 +94,10 @@ public class WordsFragment extends Fragment {
         if (wordsList.size() > 0)
             wordsList.clear();
         for (String key : map.keySet()) {
-            Log.d(TAG, ">>> Map: key = " + key + " value = " + map.get(key));
             wordsList.add(new Word(key, map.get(key)));
         }
-        Log.d(TAG, "word list size = " + wordsList.size());
         if (map.size() > 0) {
             if (countDownTimer != null) {
-                Log.d(TAG, "\nTimer was destroyed!");
                 countDownTimer.cancel();
             }
             countDownTimer = new CountDownTimer(
@@ -133,7 +127,6 @@ public class WordsFragment extends Fragment {
         private class CountDownTimer extends android.os.CountDownTimer{
         CountDownTimer(long startTime){
             super(startTime, (long) 1000);
-            Log.d(TAG, "\nTimer was created!");
         }
 
         @Override
@@ -146,14 +139,6 @@ public class WordsFragment extends Fragment {
 
         @Override
         public void onFinish() {
-            //current millis - target millis
-            if (wordsList == null){
-                Log.d(TAG, "\nwordsList is null!") ;}
-            else{
-                Log.d(TAG, "\nwordsList is NOT null!");
-                Log.d(TAG, "\nwordsList:\nsize = " + wordsList.size());
-            }
-
             drawWords();
             setDrawnWords();
             wordsRecyclerViewAdapter.swapWordsList(wordsList);

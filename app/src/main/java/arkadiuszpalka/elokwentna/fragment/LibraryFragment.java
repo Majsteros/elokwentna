@@ -50,7 +50,7 @@ public class LibraryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View myInflatedView = inflater.inflate(R.layout.fragment_library, container, false);
-        RecyclerView recyclerView = (RecyclerView) myInflatedView.findViewById(R.id.library_recycler_view);
+        RecyclerView recyclerView = myInflatedView.findViewById(R.id.library_recycler_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);

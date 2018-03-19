@@ -50,7 +50,7 @@ public class FavoritesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View myInflatedView = inflater.inflate(R.layout.fragment_favorite, container, false);
-        RecyclerView recyclerView = (RecyclerView) myInflatedView.findViewById(R.id.favorites_recycler_view);
+        RecyclerView recyclerView = myInflatedView.findViewById(R.id.favorites_recycler_view);
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(context);
         recyclerView.setLayoutManager(layoutManager);

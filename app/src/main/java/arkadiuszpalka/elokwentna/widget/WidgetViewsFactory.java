@@ -16,13 +16,12 @@ import arkadiuszpalka.elokwentna.words.Word;
 public class WidgetViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     private List<Word> wordsList = new ArrayList<>(DatabaseHandler.NUM_OF_WORDS);
     private Context context;
-    private DatabaseHandler db;
-    private int color;
+    private final DatabaseHandler db = DatabaseHandler.getInstance(context);
+    private final int color;
 
     WidgetViewsFactory(Context context, Intent intent) {
         this.context = context;
-        db = DatabaseHandler.getInstance(context);
-        this.color = intent.getIntExtra(WidgetProvider.EXTRA_COLOR, R.color.primaryColor);
+        color = intent.getIntExtra(WidgetProvider.EXTRA_COLOR, R.color.primaryColor);
     }
 
     @Override

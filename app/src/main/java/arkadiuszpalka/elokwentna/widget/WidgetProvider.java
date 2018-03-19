@@ -14,8 +14,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class WidgetProvider extends AppWidgetProvider {
     public static final String EXTRA_COLOR = "color";
-    public static final String PREF_NAME = "arkadiuszpalka.elokwentna.widget.WidgetProvider";
-    public static final String PREF_PREFIX_KEY = "prefix_";
+    private static final String PREF_NAME = "arkadiuszpalka.elokwentna.widget.WidgetProvider";
+    private static final String PREF_PREFIX_KEY = "prefix_";
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -25,7 +25,7 @@ public class WidgetProvider extends AppWidgetProvider {
             intent.putExtra(EXTRA_COLOR, loadColorPref(context, appWidgetId));
             intent.setData(Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME)));
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_provider_layout);
-            views.setRemoteAdapter(appWidgetId, R.id.widget_words, intent);
+            views.setRemoteAdapter(R.id.widget_words, intent);
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
         super.onUpdate(context, appWidgetManager, appWidgetIds);

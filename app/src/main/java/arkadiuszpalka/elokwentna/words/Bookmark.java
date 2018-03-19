@@ -1,7 +1,7 @@
 package arkadiuszpalka.elokwentna.words;
 
 public class Bookmark {
-    private char letter;
+    private final char letter;
 
     public Bookmark(char letter) {
         this.letter = letter;

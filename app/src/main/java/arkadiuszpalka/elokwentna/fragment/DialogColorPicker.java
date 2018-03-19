@@ -14,7 +14,7 @@ import arkadiuszpalka.elokwentna.R;
 public class DialogColorPicker extends DialogFragment {
     public static final String COLOR_PICKER_TAG = "dialog_color_picker";
     private int progressRed, progressGreen, progressBlue = 0;
-    View colorTemplate;
+    private View colorTemplate;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -23,9 +23,9 @@ public class DialogColorPicker extends DialogFragment {
         View inflatedView = layoutInflater.inflate(R.layout.dialog_color_picker, null);
 
         dialogBuilder.setView(inflatedView).setCancelable(false);
-        SeekBar seekBarRed = (SeekBar) inflatedView.findViewById(R.id.seekbar_red);
-        SeekBar seekBarGreen = (SeekBar) inflatedView.findViewById(R.id.seekbar_green);
-        SeekBar seekBarBlue = (SeekBar) inflatedView.findViewById(R.id.seekbar_blue);
+        SeekBar seekBarRed = inflatedView.findViewById(R.id.seekbar_red);
+        SeekBar seekBarGreen = inflatedView.findViewById(R.id.seekbar_green);
+        SeekBar seekBarBlue = inflatedView.findViewById(R.id.seekbar_blue);
         colorTemplate = inflatedView.findViewById(R.id.view_color);
 
         inflatedView.findViewById(R.id.button_proceed).setOnClickListener(new View.OnClickListener() {
@@ -96,7 +96,7 @@ public class DialogColorPicker extends DialogFragment {
         return dialogBuilder.create();
     }
 
-    String rgbToHex(int red, int green, int blue) {
+    private String rgbToHex(int red, int green, int blue) {
         if (red > 255 || green > 255 || blue > 255) {
             return "#FFF";
         }

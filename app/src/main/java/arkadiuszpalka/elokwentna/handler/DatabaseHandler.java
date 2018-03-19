@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
     private static DatabaseHandler instance;
+    private static final String TAG = DatabaseHandler.class.getName();
 
     private static final String DATABASE_NAME = "elokwentna";
     private static final int DATABASE_VERSION = 1;
@@ -48,7 +49,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_CONFIG_LAST_UPDATED = "last_updated"; //variable for database
     public static final String KEY_CONFIG_NEXT_WORD_UPDATE = "next_word_update";
     public static final String KEY_CONFIG_SAVED_IDS = "saved_ids";
-    private static final String TAG = DatabaseHandler.class.getName();
 
     private DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -73,7 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_CONFIG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT ,"
                 + KEY_CONFIG_LAST_UPDATED + " DATETIME,"
                 + KEY_CONFIG_NEXT_WORD_UPDATE + " DATETIME,"
-                + KEY_CONFIG_SAVED_IDS + " varchar(10));";
+                + KEY_CONFIG_SAVED_IDS + " varchar(20));";
         String INSERT_DEFAULT_CONFIG_DATA = "INSERT INTO "+ TABLE_CONFIG +" ("+ KEY_CONFIG_LAST_UPDATED +", "+ KEY_CONFIG_NEXT_WORD_UPDATE +", "+ KEY_CONFIG_SAVED_IDS +") "
                 + "SELECT '1970-01-01 00:00:01', '"+ (new DateTime(DateTimeZone.UTC).getMillis()) +"', '0' "
                 + "WHERE NOT EXISTS ("
@@ -133,7 +133,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried add words");
         } finally {
             db.endTransaction();
             db.close();
@@ -157,7 +156,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * @return Random words where value was_displayed is set to 0.
+     * @return Random words where value {@link #KEY_WORDS_DISPLAYED} is set to 0.
      */
     public List<Integer> randomWords() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -172,7 +171,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * @param ids {@link List of ids to }
+     * @param ids {@link List} of ids to set value {@link #KEY_WORDS_DISPLAYED} to 1.
      */
     public void setWordsDisplayed(List<Integer> ids) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -186,14 +185,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried update words by displayed");
         } finally {
             db.endTransaction();
             db.close();
         }
     }
 
-    public void setWordsFavorite(String word) {
+    /**
+     * Sets the table value {@link #KEY_WORDS_FAVORITE} to 1;
+     * @param word The word name.
+     */
+    public void setWordFavorite(String word) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -203,13 +205,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried update words by favorite");
         } finally {
             db.endTransaction();
             db.close();
         }
     }
 
+    /**
+     *
+     * @param key The row name from table {@link #TABLE_CONFIG}.
+     * @param value The value what is sets for the row.
+     */
     public void setConfig(String key, String value) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.beginTransaction();
@@ -220,13 +226,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
-            Log.d(TAG, "Error when tried update config");
         } finally {
             db.endTransaction();
             db.close();
         }
     }
 
+    /**
+     * Return value from selected row {@link #TABLE_CONFIG}.
+     * @param key The row name which data is returned.
+     * @return Data of selected row.
+     */
     public String getConfig(String key) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT `"+ key +"` FROM `"+ TABLE_CONFIG +"`", null);
@@ -238,8 +248,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Returns words where IDs as array is set in Config table.
-     * @param ids array of IDs separated by comma.
+     * Returns words where IDs as array is set in {@link #TABLE_CONFIG} table.
+     * @param ids array of IDs separated by {@link #STR_SEPARATOR comma}.
      * @return {@link Map} where key is word, value is description.
      */
     public Map<String, String> getWords(String ids) {
