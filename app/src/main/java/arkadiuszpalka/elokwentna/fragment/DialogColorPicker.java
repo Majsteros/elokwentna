@@ -46,7 +46,7 @@ public class DialogColorPicker extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressRed = progress;
-                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex(progress, progressGreen, progressBlue)));
+                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex3(progress, progressGreen, progressBlue)));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -63,7 +63,7 @@ public class DialogColorPicker extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressGreen = progress;
-                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex(progressRed, progress, progressBlue)));
+                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex3(progressRed, progress, progressBlue)));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -80,7 +80,7 @@ public class DialogColorPicker extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressBlue = progress;
-                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex(progressRed, progressGreen, progress)));
+                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex3(progressRed, progressGreen, progress)));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -96,49 +96,20 @@ public class DialogColorPicker extends DialogFragment {
         return dialogBuilder.create();
     }
 
-    private String rgbToHex(int red, int green, int blue) {
+    private String rgbToHex3(int red, int green, int blue) {
         if (red > 255 || green > 255 || blue > 255) {
             return "#FFF";
         }
         int decimals[] = {red, green, blue};
-        int rest = red % 16;
-        int result[] = new int[2];
         StringBuilder sb = new StringBuilder("#");
-
         for (int decimal : decimals) {
-            result[0] = decimal / 16;
-            if (rest > 0) {
-                result[1] = rest;
-            }
-
-            for (int j : result) {
-                if (j < 10) {
-                    sb.append(j);
-                } else {
-                    switch (j) {
-                        case 10:
-                            sb.append("A");
-                            break;
-                        case 11:
-                            sb.append("B");
-                            break;
-                        case 12:
-                            sb.append("C");
-                            break;
-                        case 13:
-                            sb.append("D");
-                            break;
-                        case 14:
-                            sb.append("E");
-                            break;
-                        case 15:
-                            sb.append("F");
-                            break;
-                    }
-                }
+            String hex = Integer.toHexString(decimal);
+            if (hex.length() == 1) {
+                sb.append("0").append(hex);
+            } else {
+                sb.append(hex);
             }
         }
-
         return sb.toString();
     }
 }
