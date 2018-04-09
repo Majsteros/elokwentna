@@ -131,7 +131,7 @@ public class LibraryRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         int layoutResourceId = 0;
         switch (viewType) {
             case WORD_CARD_VIEW:
-                layoutResourceId = R.layout.library_item;
+                layoutResourceId = R.layout.    library_item;
                 break;
             case BOOKMARK_VIEW:
                 layoutResourceId = R.layout.library_bookmark;

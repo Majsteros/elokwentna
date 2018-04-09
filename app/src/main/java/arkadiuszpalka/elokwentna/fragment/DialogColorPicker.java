@@ -46,7 +46,7 @@ public class DialogColorPicker extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressRed = progress;
-                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex3(progress, progressGreen, progressBlue)));
+                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex(progress, progressGreen, progressBlue)));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -63,7 +63,7 @@ public class DialogColorPicker extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressGreen = progress;
-                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex3(progressRed, progress, progressBlue)));
+                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex(progressRed, progress, progressBlue)));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -80,7 +80,7 @@ public class DialogColorPicker extends DialogFragment {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progressBlue = progress;
-                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex3(progressRed, progressGreen, progress)));
+                colorTemplate.setBackgroundColor(Color.parseColor(rgbToHex(progressRed, progressGreen, progress)));
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
@@ -96,7 +96,7 @@ public class DialogColorPicker extends DialogFragment {
         return dialogBuilder.create();
     }
 
-    private String rgbToHex3(int red, int green, int blue) {
+    private String rgbToHex(int red, int green, int blue) {
         if (red > 255 || green > 255 || blue > 255) {
             return "#FFF";
         }

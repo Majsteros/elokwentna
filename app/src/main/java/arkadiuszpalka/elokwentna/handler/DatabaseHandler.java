@@ -129,7 +129,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_WORDS_WORD, word);
-            values.put(KEY_WORDS_WORD, desc);
+            values.put(KEY_WORDS_DESCRIPTION, desc);
+            db.insert(TABLE_WORDS, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();

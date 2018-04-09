@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -200,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             if (!(result.equals("false"))) {
                 try {
+                    Log.d("TEST", result);
                     JSONArray jsonArray = new JSONArray(result);
                     Map<String, String> map = new HashMap<>();
                     for(int i = 0; i < jsonArray.length(); i++) {
