@@ -1,4 +1,4 @@
-###Elokwentna
+### Elokwentna
 
 Zwiększ swój zasób słów z elokwentną aplikacją!
 
@@ -12,5 +12,5 @@ Wszelkie prawa zastrzeżone.
 
 ---
 
-####Nadchodzące zmiany
+#### Nadchodzące zmiany
 1. Napisać ją jeszcze raz.
